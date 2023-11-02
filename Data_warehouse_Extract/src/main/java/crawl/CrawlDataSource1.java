@@ -84,7 +84,7 @@ public class CrawlDataSource1 {
 
 					}
 					// ghi vào file
-					WriteToCSV.crawlAndWriteToExcel(list[0], list[1], list[2], list[3], list[4], list[5]);
+					WriteToCSV.write(list[0], list[1], list[2], list[3], list[4], list[5]);
 				} else {
 					System.out.println("Table not found on the page.");
 				}
