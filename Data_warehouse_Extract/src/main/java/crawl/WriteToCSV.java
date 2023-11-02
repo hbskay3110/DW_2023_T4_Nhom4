@@ -18,7 +18,7 @@ import utils.Format;
 
 public class WriteToCSV {
 
-	public static void crawlAndWriteToExcel( List<String> tinhData, List<String> thuData,
+	public static void write( List<String> tinhData, List<String> thuData,
 			List<String> ngayXoSoData, List<String> giaiData, List<String> soTrungThuongData
 			,List<String> khuVucData) {
 		Workbook workbook = null;
