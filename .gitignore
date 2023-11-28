@@ -1,9 +1,0 @@
-target/
-/target/
-.settings
-.classpath
-.factorypath
-.project
-!**/Data_warehouse_Load/target/
-!Data_warehouse_Load/target/
-/.metadata/
