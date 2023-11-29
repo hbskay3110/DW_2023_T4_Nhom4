@@ -96,15 +96,15 @@ public class CrawlDataSource1 {
 					return data;
 				} else {
 					System.out.println("Table not found on the page.");
-					this.control.addStatus(Const.ID_SOURCE_1, "Table not found on the page.", EStatus.FE.name());
+					this.control.addStatus(Const.idSource_1, "Table not found on the page.", EStatus.FE.name());
 					
 				}
 			} else {
 				System.out.println("Request failed with status code: " + response.statusCode());
-				this.control.addStatus(Const.ID_SOURCE_1, "Request failed with status code: " + response.statusCode(), EStatus.FE.name());
+				this.control.addStatus(Const.idSource_1, "Request failed with status code: " + response.statusCode(), EStatus.FE.name());
 			}
 		} catch (IOException e) {
-			this.control.addStatus(Const.ID_SOURCE_1, e.getMessage(), EStatus.FE.name());
+			this.control.addStatus(Const.idSource_1, e.getMessage(), EStatus.FE.name());
 			e.printStackTrace();
 		}
 		return null;
@@ -145,7 +145,7 @@ public class CrawlDataSource1 {
 			boolean isCrawlSuccess = !data.isEmpty();
 			if (!isCrawlSuccess) {
 				// insert status FE
-				this.control.addStatus(Const.ID_SOURCE_1, "Fail Extract", EStatus.FE.name());
+				this.control.addStatus(Const.idSource_1, "Fail Extract", EStatus.FE.name());
 				// and
 				// end
 				result=false;
@@ -162,7 +162,7 @@ public class CrawlDataSource1 {
 			} else {
 				//write fail
 				// insert status FE
-				this.control.addStatus(Const.ID_SOURCE_1, "Fail Extract", EStatus.FE.name());
+				this.control.addStatus(Const.idSource_1, "Fail Extract", EStatus.FE.name());
 				// and
 				// delete file lottery.csv
 				File file = new File(Format.generateFileName());
@@ -181,22 +181,22 @@ public class CrawlDataSource1 {
 	 * Hàm thực thi tất cả các bước
 	 * */
 	public void execSource1() {
-
+		Const.loadConfFromDB();
 		// Get 1 row check status "CE" and created_at = now() from table controls
 		boolean isExtractCompleteToday = this.control.getStatusToday().equals(EStatus.CE.name()) ? true : false;
 		if (!isExtractCompleteToday) {
 			// insert into status BE
-			this.control.addStatus(Const.ID_SOURCE_1, "Begin Extract", EStatus.BE.name());
+			this.control.addStatus(Const.idSource_1, "Begin Extract", EStatus.BE.name());
 			// crawl data from website
 			ArrayList<String> listProvinceTodays = (ArrayList<String>) CrawlProvinceSource1.getProvinces();
 			if(listProvinceTodays.isEmpty()) {
-				this.control.addStatus(Const.ID_SOURCE_1, "Fail Extract", EStatus.FE.name());
+				this.control.addStatus(Const.idSource_1, "Fail Extract", EStatus.FE.name());
 				return;
 			}
 			// check isExtractAndWriteCSV is success 
 			boolean isSuccess= isExtractAndWriteCSV(listProvinceTodays);
 			if(isSuccess) {
-				this.control.addStatus(Const.ID_SOURCE_1, "Complete Extract", EStatus.CE.name());
+				this.control.addStatus(Const.idSource_1, "Complete Extract", EStatus.CE.name());
 			}
 			else {
 				// Fail -> exit

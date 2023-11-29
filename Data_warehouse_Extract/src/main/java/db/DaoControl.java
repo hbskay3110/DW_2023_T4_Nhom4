@@ -81,19 +81,18 @@ public class DaoControl {
 	 * hàm getDataConfig(String code , int id)
 	 * Nhận vào code và id để load lên thuộc tính cấu hình tương ứng
 	 * */
-	public  DataConfig getDataConfig(String code , int id) {
+	public  DataConfig getDataConfig(int id) {
 		DataConfig rs = null;
 		try (Connection connection = DataSource.getConnection()) {
             if (connection != null) {
                 // Example query execution
                 String query = "SELECT * FROM data_configs AS C"
-                		+ " WHERE (C.flag = 1) AND (C.code = ? OR C.id = ?)"
+                		+ " WHERE C.flag = 1 AND C.id = ?"
                 		+ " LIMIT 1"
                 		;
                 try {
                 	PreparedStatement preparedStatement = connection.prepareStatement(query);
-                		preparedStatement.setString(1, code);
-                		preparedStatement.setInt(2, id);
+                		preparedStatement.setInt(1, id);
                 		ResultSet resultSet = preparedStatement.executeQuery();
                 	rs = new DataConfig();
                     while (resultSet.next()) {
