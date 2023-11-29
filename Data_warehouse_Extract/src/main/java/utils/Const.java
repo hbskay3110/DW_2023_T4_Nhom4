@@ -7,53 +7,78 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
+import db.DaoControl;
+import model.DataConfig;
+
 public class Const {
-    public static final String PATH;
-    public static final String NAME_FILE;
-    public static final String EXCEL_EXTENSION;
-    public static final String NAME_SHEET;
-    public static final String DATE_FORMAT;
+	// file
+	public static final String PATH;
+	public static final String NAME_FILE;
+	public static final String CSV_EXTENSION;
+	public static final String NAME_SHEET;
 
-    public static final String SOURCE_1;
-    public static final String MIEN_NAM;
-    public static final String MIEN_TRUNG;
-    public static final String MIEN_BAC;
-    public static final String NAM;
-    public static final String BAC;
-    public static final String NAME_NORTH;
-    public static final String TRUNG;
+	// 
+	public static final String SOURCE_1;
+	public static final String MIEN_NAM;
+	public static final String MIEN_TRUNG;
+	public static final String MIEN_BAC;
+	public static final String NAM;
+	public static final String BAC;
+	public static final String TRUNG;
+	public static final String NAME_NORTH;
+	public static String date = "";
+	public static final int QUANTITY_ATTRIBUTE = 6;
 
-    static {
-        Properties properties = loadProperties();
-        
-        PATH = properties.getProperty("PATH");
-        NAME_FILE = properties.getProperty("NAME_FILE");
-        EXCEL_EXTENSION = properties.getProperty("EXCEL_EXTENSION");
-        NAME_SHEET = properties.getProperty("NAME_SHEET");
-        DATE_FORMAT = properties.getProperty("DATE_FORMAT");
 
-        SOURCE_1 = properties.getProperty("SOURCE_1");
-        MIEN_NAM = properties.getProperty("MIEN_NAM");
-        MIEN_TRUNG = properties.getProperty("MIEN_TRUNG");
-        MIEN_BAC = properties.getProperty("MIEN_BAC");
-        NAME_NORTH = "Miền Bắc";
-        NAM = properties.getProperty("NAM");
-        BAC = properties.getProperty("BAC");
-        TRUNG = properties.getProperty("TRUNG");
-    }
+	
+	public static final String CODE_SOURCE_1;
+	public static final int ID_SOURCE_1;
+	 
 
-    private static Properties loadProperties() {
-        Properties properties = new Properties();
+	static {
+		// load config from file
+		Properties properties = loadProperties();
+		DataConfig  config ;
+		
+		CODE_SOURCE_1 = properties.getProperty("code_source_1");
+		ID_SOURCE_1 = Integer.parseInt(properties.getProperty("id_source_1"));
+		
+		
+		NAME_SHEET = properties.getProperty("NAME_SHEET");
 
-        try (InputStream input = new FileInputStream("src/main/resources/config.properties");
-             InputStreamReader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+		
+		MIEN_NAM = properties.getProperty("MIEN_NAM");
+		MIEN_TRUNG = properties.getProperty("MIEN_TRUNG");
+		MIEN_BAC = properties.getProperty("MIEN_BAC");
+		NAME_NORTH = "Miền Bắc";
+		NAM = properties.getProperty("NAM");
+		BAC = properties.getProperty("BAC");
+		TRUNG = properties.getProperty("TRUNG");
+		// load data config from control db
+		config = new DaoControl().getDataConfig(CODE_SOURCE_1, ID_SOURCE_1);
+		PATH = config.getLocation();
+		NAME_FILE = config.getFileName();
+		CSV_EXTENSION = config.getFormat();
+		SOURCE_1 = config.getSourcePath();
+		
+	}
 
-            properties.load(reader);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Lỗi khi đọc file properties.");
-        }
+	private static Properties loadProperties() {
+		Properties properties = new Properties();
 
-        return properties;
-    }
+		try (InputStream input = Const.class.getClassLoader().getResourceAsStream("config.properties");
+			     InputStreamReader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+			    properties.load(reader);
+			} catch (IOException e) {
+			    e.printStackTrace();
+			    System.err.println("Lỗi khi đọc file properties.");
+			}
+
+
+		return properties;
+	}
+
+	public static void setDate(String date) {
+		Const.date = date;
+	}
 }

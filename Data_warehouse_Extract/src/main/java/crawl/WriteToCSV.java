@@ -12,13 +12,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import io.FileManage;
 import utils.Const;
 import utils.Format;
 
 public class WriteToCSV {
 
-	public static void write( List<String> tinhData, List<String> thuData,
+	public static boolean write( List<String> tinhData, List<String> thuData,
 			List<String> ngayXoSoData, List<String> giaiData, List<String> soTrungThuongData
 			,List<String> khuVucData) {
 		Workbook workbook = null;
@@ -29,15 +28,15 @@ public class WriteToCSV {
                 // Nếu thư mục không tồn tại, tạo thư mục mới
                 dataFolder.mkdirs();
             }
-			// Kiểm tra xem tệp Excel đã tồn tại chưa
-			File excelFile = new File(Format.generateFileName());
+			// Kiểm tra xem tệp CSV đã tồn tại chưa
+			File csvFile = new File(Format.generateFileName());
 
-			if (excelFile.exists()) {
-				// Nếu tệp Excel đã tồn tại, mở nó
+			if (csvFile.exists()) {
+				// Nếu tệp CSV đã tồn tại, mở nó
 				FileInputStream fileInputStream = new FileInputStream(Format.generateFileName());
-				workbook = WorkbookFactory.create(fileInputStream);
+				workbook = new XSSFWorkbook(fileInputStream);
 			} else {
-				// Nếu tệp Excel chưa tồn tại, tạo một tệp mới
+				// Nếu tệp CSV chưa tồn tại, tạo một tệp mới
 				workbook = new XSSFWorkbook();
 			}
 
@@ -59,13 +58,16 @@ public class WriteToCSV {
 				dataRow.createCell(5).setCellValue(khuVucData.get(i));
 			}
 
+			// ghi
 			try (FileOutputStream outputStream = new FileOutputStream(Format.generateFileName())) {
 				workbook.write(outputStream);
 				System.out.println("Data has been written to " + Format.generateFileName() + " successfully.");
+				return true;
 			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
 }
