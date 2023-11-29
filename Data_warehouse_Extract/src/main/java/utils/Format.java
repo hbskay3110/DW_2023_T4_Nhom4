@@ -5,11 +5,14 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import crawl.CrawlProvinceSource1;
+
 public class Format {
 	public static String formatWeekdaysFromText(String text) {
 		// Regex pattern to find day of the week in the string
-		Pattern pattern = Pattern.compile("\\b(Chủ Nhật|Thứ [Hh]ai|Thứ [Bb]a|Thứ [Tt]ư|Thứ [Nn]ăm|Thứ [Ss]áu|Thứ [Bb]ảy)\\b");
-	    Matcher matcher = pattern.matcher(text);
+		Pattern pattern = Pattern
+				.compile("\\b(Chủ Nhật|Thứ [Hh]ai|Thứ [Bb]a|Thứ [Tt]ư|Thứ [Nn]ăm|Thứ [Ss]áu|Thứ [Bb]ảy)\\b");
+		Matcher matcher = pattern.matcher(text);
 		return matcher.find() ? matcher.group(0) : "Không tìm thấy thông tin";
 	}
 
@@ -32,6 +35,7 @@ public class Format {
 		}
 	}
 
+	// dựa vao url để trả về tên các miền tương ứng
 	public static String generateArea(String url) {
 		if (url.contains(Const.MIEN_NAM)) {
 			return Const.NAM;
@@ -41,23 +45,13 @@ public class Format {
 		}
 		return Const.TRUNG;
 	}
+
+	// trả về đường dẫn đầy đủ và tên file csv
 	public static String generateFileName() {
-        // Tạo đối tượng Date để lấy ngày hiện tại
-        Date currentDate = new Date();
-
-        // Định dạng ngày theo định dạng "ddMMyyyy"
-        SimpleDateFormat dateFormat = new SimpleDateFormat(Const.DATE_FORMAT);
-
-        // Tạo chuỗi ngày được định dạng
-        String formattedDate = dateFormat.format(currentDate);
-
-        // Tạo tên tệp Excel
-        String fileName =Const.PATH + Const.NAME_FILE + formattedDate + Const.EXCEL_EXTENSION;
-
-        return fileName;
-    }
-	
-	public static void main(String[] args) {
-		System.out.println(generateFileName());
+		return Const.PATH + Const.NAME_FILE + Const.CSV_EXTENSION;
 	}
+
+	
+
+	
 }
