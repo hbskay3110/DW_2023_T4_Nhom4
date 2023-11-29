@@ -1,40 +1,44 @@
 package crawl;
 
+import java.io.File;
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import org.jsoup.Connection;
 import org.jsoup.Connection.Response;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import io.FileManage;
+import db.DaoControl;
+import model.EStatus;
 import utils.Const;
 import utils.Format;
 
 public class CrawlDataSource1 {
 
-	@SafeVarargs
-	public static void crawDataProvinceSource1(String url, List<String>... list) {
+	DaoControl control;
+
+	public CrawlDataSource1() {
+		control = new DaoControl();
+	}
+
+	/*
+	 * hàm crawDataProvinceSource1(String url, List<String>... list)
+	 * nhận vào tham số url trang web cần crawl dữ liệu ,
+	 *  truyền vào các collection List<String> để lưu dữ liệu khi hoàn thành
+	 * */
+	public Map<String, List<String>> crawDataProvinceSource1(String url, List<String>... list) {
+		Response response = null;
 		if (!checkLenghtListParam(list)) {
 			System.out.println("Not enough list data");
-			return;
+			return null;
 		}
-		Response response = null;
 		try {
-			response = ConnectionSource1.connectLink(Const.SOURCE_1.trim() + url);
+			response = ConnectionSource1.connectLink(Const.SOURCE_1.trim() + url + CrawlProvinceSource1.paramDate);
 			// Check if the request was successful
 			if (response.statusCode() == 200) {
 				Document document = response.parse();
@@ -47,13 +51,11 @@ public class CrawlDataSource1 {
 
 				// Check if the table is found
 				if (table != null) {
-
 					// Iterate through rows in the table
 					for (Element row : table.select("tr")) {
 						Elements spanElements = row.select("span.number");
 						Elements cells = row.select("td.prize");
 						if (!cells.isEmpty()) {
-
 							// Iterate through the <span> elements
 							for (Element spanElement : spanElements) {
 								String dataValue = spanElement.attr("data-value");
@@ -71,56 +73,141 @@ public class CrawlDataSource1 {
 					}
 					// nap vao danh sach
 					for (Map.Entry<String, String> entry : dataByPrize.entrySet()) {
-
-						String prize = entry.getKey();
-						String dataValues = entry.getValue();
-						list[0].add(document.select("button.btn-select-lottery").text().trim());
-						list[1].add(Format.formatWeekdaysFromText(table.select("h2").text().trim()));
-						list[2].add(Format.formatDateFromText(table.select("h2").text().trim()));
-						list[3].add(prize);
-						list[4].add(dataValues);
-						String khuVuc = Format.generateArea(url);
-						list[5].add(khuVuc);
-
+						String locations = document.select("button.btn-select-lottery").text().trim();
+						String regions = Format.generateArea(url);
+						String weekdays = Format.formatWeekdaysFromText(table.select("h2").text().trim());
+						String prizes = entry.getKey();
+						String date = Format.formatDateFromText(table.select("h2").text().trim());
+						String results = entry.getValue();
+						list[0].add(locations);
+						list[1].add(weekdays);
+						list[2].add(date);
+						list[3].add(prizes);
+						list[4].add(results);
+						list[5].add(regions);
 					}
-					// ghi vào file
-					WriteToCSV.write(list[0], list[1], list[2], list[3], list[4], list[5]);
+					Map<String, List<String>> data = new TreeMap<>();
+					data.put("locations", list[0]);
+					data.put("weekdays", list[1]);
+					data.put("date", list[2]);
+					data.put("prizes", list[3]);
+					data.put("results", list[4]);
+					data.put("regions", list[5]);
+					return data;
 				} else {
 					System.out.println("Table not found on the page.");
+					this.control.addStatus(Const.ID_SOURCE_1, "Table not found on the page.", EStatus.FE.name());
+					
 				}
 			} else {
 				System.out.println("Request failed with status code: " + response.statusCode());
+				this.control.addStatus(Const.ID_SOURCE_1, "Request failed with status code: " + response.statusCode(), EStatus.FE.name());
 			}
 		} catch (IOException e) {
+			this.control.addStatus(Const.ID_SOURCE_1, e.getMessage(), EStatus.FE.name());
 			e.printStackTrace();
 		}
+		return null;
 	}
 
+	/*
+	 * hàm checkLenghtListParam(List<String>... lists)
+	 * Kiểm tra xem có phải có 6 collection List<String> được truyền vào hay không
+	 * bởi vì có 6 trường thuộc tính: Địa điểm, Thứ, Ngày ,Giải ,Kết quả, Vùng
+	 * */
 	@SuppressWarnings("unchecked")
 	public static boolean checkLenghtListParam(List<String>... lists) {
-		if (lists.length == 6)
+		if (lists.length == Const.QUANTITY_ATTRIBUTE)
 			return true;
 		return false;
 
 	}
-	// thuc thi source 1
-	public void execSource1() {
-		ArrayList<String> listProvinceTodays = (ArrayList<String>) CrawlProvinceSource1.getProvinces();
-		for (int i = 0; i < listProvinceTodays.size(); i++) {
+	
+	/*
+	 * hàm isExtractSuccess(ArrayList<String>listProvinceTodays)
+	 * kiểm tra xem việc Crawl kèm với ghi có thành công hay không
+	 * */
+	public boolean isExtractAndWriteCSV(ArrayList<String>listProvinceTodays) {
+		boolean result = true;
+		for (String province : listProvinceTodays) {
 			// Sample data (replace with actual data)
-			List<String> tinhData = new ArrayList<String>();
-			List<String> thuData = new ArrayList<String>();
-			List<String> ngayXoSoData = new ArrayList<String>();
-			List<String> giaiData = new ArrayList<String>();
-			List<String> soTrungThuongData = new ArrayList<String>();
-			List<String> khuVucData = new ArrayList<String>();
-			String urlProvince = CrawlProvinceSource1.getUrls(listProvinceTodays.get(i));
-			crawDataProvinceSource1(urlProvince, tinhData, thuData, ngayXoSoData, giaiData, soTrungThuongData,
-					khuVucData);
+			List<String> locations = new ArrayList<>();
+			List<String> weekdays = new ArrayList<>();
+			List<String> date = new ArrayList<>();
+			List<String> prize = new ArrayList<>();
+			List<String> results = new ArrayList<>();
+			List<String> regions = new ArrayList<>();
 
-		}
+			String urlLocation = CrawlProvinceSource1.getUrls(province);
+			Map<String, List<String>> data = crawDataProvinceSource1(urlLocation, locations, weekdays, date, prize,
+					results, regions);
+			// check crawl isCrawlSuccess
+			boolean isCrawlSuccess = !data.isEmpty();
+			if (!isCrawlSuccess) {
+				// insert status FE
+				this.control.addStatus(Const.ID_SOURCE_1, "Fail Extract", EStatus.FE.name());
+				// and
+				// end
+				result=false;
+				break;
+				
+			}
+
+			// write data to file
+			boolean isWriteSuccess = WriteToCSV.write(data.get("locations"), data.get("weekdays"), data.get("date"),
+					data.get("prizes"), data.get("results"), data.get("regions"));
+			// check write success
+			if (isWriteSuccess) {
+				result = true;
+			} else {
+				//write fail
+				// insert status FE
+				this.control.addStatus(Const.ID_SOURCE_1, "Fail Extract", EStatus.FE.name());
+				// and
+				// delete file lottery.csv
+				File file = new File(Format.generateFileName());
+				file.delete();
+				// end
+				result= false;
+				break;
+			}
+		
+	}
+		return result;
 	}
 
+	/*
+	 * hàm execSource1()
+	 * Hàm thực thi tất cả các bước
+	 * */
+	public void execSource1() {
 
+		// Get 1 row check status "CE" and created_at = now() from table controls
+		boolean isExtractCompleteToday = this.control.getStatusToday().equals(EStatus.CE.name()) ? true : false;
+		if (!isExtractCompleteToday) {
+			// insert into status BE
+			this.control.addStatus(Const.ID_SOURCE_1, "Begin Extract", EStatus.BE.name());
+			// crawl data from website
+			ArrayList<String> listProvinceTodays = (ArrayList<String>) CrawlProvinceSource1.getProvinces();
+			if(listProvinceTodays.isEmpty()) {
+				this.control.addStatus(Const.ID_SOURCE_1, "Fail Extract", EStatus.FE.name());
+				return;
+			}
+			// check isExtractAndWriteCSV is success 
+			boolean isSuccess= isExtractAndWriteCSV(listProvinceTodays);
+			if(isSuccess) {
+				this.control.addStatus(Const.ID_SOURCE_1, "Complete Extract", EStatus.CE.name());
+			}
+			else {
+				// Fail -> exit
+				return;
+			}
+
+		} else {
+			// excuted when today is crawled
+			System.out.println("Hôm nay bạn đã crawl rồi!");
+			return;
+		}
+	}
 
 }

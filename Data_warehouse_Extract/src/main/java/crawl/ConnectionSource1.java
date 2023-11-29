@@ -15,6 +15,10 @@ import org.jsoup.Connection.Response;
 
 public class ConnectionSource1 {
 	
+	/*
+	 * hàm connectLink(String link)
+	 * Nhận vào link url đường dẫn website cần crawl
+	 * */
 	public static Response connectLink(String link) {
 		Response response = null;
 		try {
@@ -43,7 +47,4 @@ public class ConnectionSource1 {
 		return response;
 	}
 	
-	public static void main(String[] args) {
-	}
-
 }
