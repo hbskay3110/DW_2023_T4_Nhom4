@@ -183,7 +183,7 @@ public class CrawlDataSource1 {
 	public void execSource1() {
 		Const.loadConfFromDB();
 		// Get 1 row check status "CE" and created_at = now() from table controls
-		boolean isExtractCompleteToday = this.control.getStatusToday().equals(EStatus.CE.name()) ? true : false;
+		boolean isExtractCompleteToday = EStatus.CE.name().equals(this.control.getStatusToday()) ? true : false;
 		if (!isExtractCompleteToday) {
 			// insert into status BE
 			this.control.addStatus(Const.idSource_1, "Begin Extract", EStatus.BE.name());
