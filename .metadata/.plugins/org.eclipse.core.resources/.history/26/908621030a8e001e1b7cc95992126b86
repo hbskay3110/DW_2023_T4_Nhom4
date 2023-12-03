@@ -34,12 +34,14 @@
 
 	</dependencies>
 	<build>
+	<finalName>Extract</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
+<<<<<<< HEAD:.metadata/.plugins/org.eclipse.core.resources/.history/26/908621030a8e001e1b7cc95992126b86
 					<source>17</source> <!-- Đặt phiên bản của JDK của bạn -->
 					<target>17</target> <!-- Đặt phiên bản của JDK của bạn -->
 					<archive>
@@ -47,8 +49,45 @@
 							<mainClass>main.Main</mainClass>
 						</manifest>
 					</archive>
+=======
+					<encoding>UTF-8</encoding>
+					<source>1.8</source> <!-- Điều chỉnh phiên bản source tương ứng với JDK bạn đang sử dụng -->
+					<target>1.8</target> <!-- Điều chỉnh phiên bản target tương ứng với JDK bạn đang sử dụng -->
+
+>>>>>>> 882ed33c9cac6732b838e0559cbdcce129ae1640:Data_warehouse_Extract/pom.xml
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.4</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>main.Main</mainClass>
+								</transformer>
+							</transformers>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
 </project>
+

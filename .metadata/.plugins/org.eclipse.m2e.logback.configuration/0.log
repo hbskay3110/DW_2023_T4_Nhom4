@@ -4173,3 +4173,8 @@ Caused by: org.codehaus.plexus.util.xml.pull.XmlPullParserException: Unrecognise
 2023-11-30 00:42:02,201 [Worker-38: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
 2023-11-30 00:42:02,204 [Worker-38: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
 2023-11-30 00:42:02,205 [Worker-38: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory E:\DevPrograms\GIT\DW_2023_T4_Nhom4\Data_warehouse_Extract\src\test\resources
+2023-12-03 13:17:52,886 [Worker-3: Building] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: com.dw:Data_warehouse:0.0.1-SNAPSHOT @ E:\DevPrograms\GIT\DW_2023_T4_Nhom4\Data_warehouse_Extract\pom.xml.
+2023-12-03 13:17:56,537 [Worker-3: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2023-12-03 13:17:56,544 [Worker-3: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2023-12-03 13:17:56,566 [Worker-3: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2023-12-03 13:17:56,567 [Worker-3: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory E:\DevPrograms\GIT\DW_2023_T4_Nhom4\Data_warehouse_Extract\src\test\resources

@@ -20,19 +20,33 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import model.ERegion;
 import utils.Const;
 import utils.Format;
 
 public class CrawlProvinceSource1 {
 
+<<<<<<< HEAD:.metadata/.plugins/org.eclipse.core.resources/.history/97/80ea33e9ed8a001e1264f914a6d29f95
 	private String paramDate = "?date="
 	private static final String[] AREA_LOTTERY = { Const.SOURCE_1 + Const.MIEN_TRUNG + Const.date,
 			Const.SOURCE_1 + Const.MIEN_NAM + Const.date, Const.SOURCE_1 + Const.MIEN_BAC + Const.date };
+=======
+	/*
+	 * paramDate: lưu ngày nếu người dùng truyền param khi chạy thủ công
+	 * 
+	 * */
+	static String paramDate = Const.date.length() == 0 ? "" : "?date=" + Const.date;
+	private static final String[] AREA_LOTTERY = { Const.SOURCE_1 + ERegion.MIEN_TRUNG.getCode() + paramDate,
+			Const.SOURCE_1 + ERegion.MIEN_NAM.getCode() + paramDate, Const.SOURCE_1 + ERegion.MIEN_BAC.getCode() + paramDate };
+>>>>>>> 882ed33c9cac6732b838e0559cbdcce129ae1640:Data_warehouse_Extract/src/main/java/crawl/CrawlProvinceSource1.java
 
-	// lay tinh thanh pho co kqxs hom nay ( now )
+	/*
+	 * hàm getProvinces()
+	 * Chức năng: lấy các đài được công bố kết quả hiện tại
+	 * */
 	public static List<String> getProvinces() {
 		ArrayList<String> result = new ArrayList<>();
-		result.add(Const.NAME_NORTH);
+		result.add(ERegion.MIEN_BAC.getDescription());
 		Response response = null;
 		for (int i = 0; i < AREA_LOTTERY.length; i++) {
 
@@ -59,9 +73,13 @@ public class CrawlProvinceSource1 {
 		return result;
 	}
 
-	// danh sach tinh thanh pho
+	/*
+	 * hàm listProvinces()
+	 * Chức năng: lưu tất cả các đài xổ số ở Việt Nam
+	 * */
 	public static Map<String, String> listProvinces() {
 		Map<String, String> result = new HashMap<>();
+<<<<<<< HEAD:.metadata/.plugins/org.eclipse.core.resources/.history/97/80ea33e9ed8a001e1264f914a6d29f95
 		result.put(Format.extractProvinceName("Xổ số Hồ Chí Minh"), Const.MIEN_NAM + "/xo-so-ho-chi-minh");
 		result.put(Format.extractProvinceName("Xổ số Đồng Tháp"), Const.MIEN_NAM + "/xo-so-dong-thap");
 		result.put(Format.extractProvinceName("Xổ số Cà Mau"), Const.MIEN_NAM + "/xo-so-ca-mau");
@@ -98,17 +116,60 @@ public class CrawlProvinceSource1 {
 		result.put(Format.extractProvinceName("Xổ số Đắk Nông"), Const.MIEN_TRUNG + "/xo-so-dac-nong");
 		result.put(Format.extractProvinceName("Xổ số Kon Tum"), Const.MIEN_TRUNG + "/xo-so-kon-tum");
 		result.put(Format.extractProvinceName("Xổ số Miền Bắc"), Const.MIEN_BAC);
+=======
+		result.put(Format.extractProvinceName("Xổ số Hồ Chí Minh"), ERegion.MIEN_NAM.getCode() + "/xo-so-ho-chi-minh");
+		result.put(Format.extractProvinceName("Xổ số Đồng Tháp"), ERegion.MIEN_NAM.getCode() + "/xo-so-dong-thap");
+		result.put(Format.extractProvinceName("Xổ số Cà Mau"), ERegion.MIEN_NAM.getCode() + "/xo-so-ca-mau");
+		result.put(Format.extractProvinceName("Xổ số Bến Tre"), ERegion.MIEN_NAM.getCode() + "/xo-so-ben-tre");
+		result.put(Format.extractProvinceName("Xổ số Vũng Tàu"), ERegion.MIEN_NAM.getCode() + "/xo-so-vung-tau");
+		result.put(Format.extractProvinceName("Xổ số Bạc Liêu"), ERegion.MIEN_NAM.getCode() + "/xo-so-bac-lieu");
+		result.put(Format.extractProvinceName("Xổ số Đồng Nai"), ERegion.MIEN_NAM.getCode() + "/xo-so-dong-nai");
+		result.put(Format.extractProvinceName("Xổ số Cần Thơ"), ERegion.MIEN_NAM.getCode() + "/xo-so-can-tho");
+		result.put(Format.extractProvinceName("Xổ số Sóc Trăng"), ERegion.MIEN_NAM.getCode() + "/xo-so-soc-trang");
+		result.put(Format.extractProvinceName("Xổ số Tây Ninh"), ERegion.MIEN_NAM.getCode() + "/xo-so-tay-ninh");
+		result.put(Format.extractProvinceName("Xổ số An Giang"), ERegion.MIEN_NAM.getCode() + "/xo-so-an-giang");
+		result.put(Format.extractProvinceName("Xổ số Bình Thuận"), ERegion.MIEN_NAM.getCode() + "/xo-so-binh-thuan");
+		result.put(Format.extractProvinceName("Xổ số Vĩnh Long"), ERegion.MIEN_NAM.getCode() + "/xo-so-vinh-long");
+		result.put(Format.extractProvinceName("Xổ số Bình Dương"), ERegion.MIEN_NAM.getCode() + "/xo-so-binh-duong");
+		result.put(Format.extractProvinceName("Xổ số Trà Vinh"), ERegion.MIEN_NAM.getCode() + "/xo-so-tra-vinh");
+		result.put(Format.extractProvinceName("Xổ số Long An"), ERegion.MIEN_NAM.getCode() + "/xo-so-long-an");
+		result.put(Format.extractProvinceName("Xổ số Bình Phước"), ERegion.MIEN_NAM.getCode() + "/xo-so-binh-phuoc");
+		result.put(Format.extractProvinceName("Xổ số Hậu Giang"), ERegion.MIEN_NAM.getCode() + "/xo-so-hau-giang");
+		result.put(Format.extractProvinceName("Xổ số Tiền Giang"), ERegion.MIEN_NAM.getCode() + "/xo-so-tien-giang");
+		result.put(Format.extractProvinceName("Xổ số Kiên Giang"), ERegion.MIEN_NAM.getCode() + "/xo-so-kien-giang");
+		result.put(Format.extractProvinceName("Xổ số Đà Lạt"), ERegion.MIEN_NAM.getCode() + "/xo-so-da-lat");
+		result.put(Format.extractProvinceName("Xổ số Phú Yên"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-phu-yen");
+		result.put(Format.extractProvinceName("Xổ số Thừa Thiên Huế"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-thua-thien-hue");
+		result.put(Format.extractProvinceName("Xổ số Đắk Lắk"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-dac-lac");
+		result.put(Format.extractProvinceName("Xổ số Quảng Nam"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-quang-nam");
+		result.put(Format.extractProvinceName("Xổ số Đà Nẵng"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-da-nang");
+		result.put(Format.extractProvinceName("Xổ số Khánh Hòa"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-khanh-hoa");
+		result.put(Format.extractProvinceName("Xổ số Quảng Bình"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-quang-binh");
+		result.put(Format.extractProvinceName("Xổ số Bình Định"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-binh-dinh");
+		result.put(Format.extractProvinceName("Xổ số Quảng Trị"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-quang-tri");
+		result.put(Format.extractProvinceName("Xổ số Gia Lai"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-gia-lai");
+		result.put(Format.extractProvinceName("Xổ số Ninh Thuận"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-ninh-thuan");
+		result.put(Format.extractProvinceName("Xổ số Quảng Ngãi"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-quang-ngai");
+		result.put(Format.extractProvinceName("Xổ số Đắk Nông"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-dac-nong");
+		result.put(Format.extractProvinceName("Xổ số Kon Tum"), ERegion.MIEN_TRUNG.getCode() + "/xo-so-kon-tum");
+		result.put(Format.extractProvinceName("Xổ số Miền Bắc"), ERegion.MIEN_BAC.getCode());
+>>>>>>> 882ed33c9cac6732b838e0559cbdcce129ae1640:Data_warehouse_Extract/src/main/java/crawl/CrawlProvinceSource1.java
 
 		return result;
 	}
 
+<<<<<<< HEAD:.metadata/.plugins/org.eclipse.core.resources/.history/97/80ea33e9ed8a001e1264f914a6d29f95
 	// lay url
+=======
+	/*
+	 * hàm getUrls(String provice)
+	 * Nhận vào tên đài xổ số
+	 * Trả về: Đường dẫn URL ứng với tên tỉnh
+	 * */
+>>>>>>> 882ed33c9cac6732b838e0559cbdcce129ae1640:Data_warehouse_Extract/src/main/java/crawl/CrawlProvinceSource1.java
 	public static String getUrls(String provice) {
 		return listProvinces().containsKey(provice) ? listProvinces().get(provice) : "";
 	}
 
-	public static void main(String[] args) {
-//		getProvinces().forEach(x -> System.out.println(x));
-		System.out.println(getUrls(Const.NAME_NORTH));
-	}
+
 }

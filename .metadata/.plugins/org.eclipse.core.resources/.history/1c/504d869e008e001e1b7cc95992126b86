@@ -6,6 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import crawl.CrawlProvinceSource1;
+<<<<<<< HEAD:.metadata/.plugins/org.eclipse.core.resources/.history/1c/504d869e008e001e1b7cc95992126b86
+=======
+import model.ERegion;
+>>>>>>> 882ed33c9cac6732b838e0559cbdcce129ae1640:Data_warehouse_Extract/src/main/java/utils/Format.java
 
 public class Format {
 	public static String formatWeekdaysFromText(String text) {
@@ -37,13 +41,13 @@ public class Format {
 
 	// dựa vao url để trả về tên các miền tương ứng
 	public static String generateArea(String url) {
-		if (url.contains(Const.MIEN_NAM)) {
-			return Const.NAM;
+		if (url.contains(ERegion.MIEN_NAM.getCode())) {
+			return ERegion.MIEN_NAM.getDescription();
 		}
-		if (url.contains(Const.MIEN_BAC)) {
-			return Const.BAC;
+		if (url.contains(ERegion.MIEN_BAC.getCode())) {
+			return ERegion.MIEN_BAC.getDescription();
 		}
-		return Const.TRUNG;
+		return ERegion.MIEN_TRUNG.getDescription();
 	}
 
 	// trả về đường dẫn đầy đủ và tên file csv
