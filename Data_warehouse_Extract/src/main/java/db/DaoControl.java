@@ -35,6 +35,9 @@ public class DaoControl {
     private <T> T executeQuery(String query, ResultSetMapper<T> mapper, Object... params) {
         T result = null;
 
+        /*
+         * 3.Kiểm tra kết nối cơ sở dữ liệu thành công hay không
+         * */
         // Mở và đóng kết nối tự động bằng try-with-resources
         try (Connection connection = DataSource.getConnection()) {
             if (connection != null) {
@@ -74,21 +77,31 @@ public class DaoControl {
         return executeUpdate(query, id, note, status);
     }
 
-    // Phương thức lấy trạng thái ngày hôm nay từ bảng data_files
-    public String getStatusToday() {
+  
+    /*
+     * 
+     * 6.Lấy status từ 1 dòng trong bảng data_files 
+     * với điều kiện: id bằng id nhận từ arguments[0] ,
+     * 		thời gian tạo có phải là ngày hôm nay 
+     * 		và status = "CE"
+     * 
+     * */
+    public String getStatusToday(int id) {
         String query = "SELECT F.status FROM data_configs AS C "
-                + "JOIN data_files AS F ON C.id = F.id_config "
+                + "JOIN data_files AS F ON F.id_config = ? "
                 + "WHERE F.status = 'CE' AND YEAR(F.created_at) = YEAR(NOW()) "
                 + "AND MONTH(F.created_at) = MONTH(NOW()) AND DAY(F.created_at) = DAY(NOW()) "
-                + "AND C.flag = 1 LIMIT 1";
+                + "LIMIT 1";
         return executeQuery(query, rs -> {
             if (rs.next()) {
                 return rs.getString("status");
-            }
+            } 
             return null;
-        });
+        },id);
     }
-
+    /*
+     * 4.Lấy 1 dòng trong bảng data_configs theo id và có flat = 1
+     * */
     // Phương thức lấy thông tin cấu hình từ bảng data_configs
     public DataConfig getDataConfig(int id) {
         String query = "SELECT * FROM data_configs AS C WHERE C.flag = 1 AND C.id = ? LIMIT 1";
