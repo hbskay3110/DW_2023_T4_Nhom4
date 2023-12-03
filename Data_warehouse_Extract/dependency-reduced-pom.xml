@@ -5,6 +5,7 @@
   <artifactId>Data_warehouse</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <build>
+    <finalName>Extract</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
