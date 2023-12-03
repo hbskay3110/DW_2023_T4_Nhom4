@@ -1,0 +1,44 @@
+package db;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import utils.Const;
+
+public class DataSource {
+
+	private static HikariConfig config ;
+	private static HikariDataSource dataSource;
+
+	static {
+		config = new HikariConfig();
+		config.setDriverClassName(Const.CLASS_NAME);
+		config.setJdbcUrl(Const.URL);
+		config.setUsername(Const.USER);
+		config.setPassword(Const.PASSWORD);
+		config.setMaximumPoolSize(Const.MAXIMUM_POOL_SIZE);
+
+		dataSource = new HikariDataSource(config);
+	}
+
+	private DataSource() {
+	}
+
+	public static Connection getConnection() throws SQLException {
+		return dataSource.getConnection();
+	}
+	
+	public static void main(String[] args) {
+		try {
+			if(getConnection()!= null) {
+				System.out.println("Ok!");
+			}
+		} catch (SQLException e) {
+			System.out.println("Lỗi: "+e.getMessage());
+		}
+	}
+
+}

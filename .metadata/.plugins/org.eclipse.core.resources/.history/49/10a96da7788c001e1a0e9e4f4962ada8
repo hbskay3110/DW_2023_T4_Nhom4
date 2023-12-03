@@ -1,0 +1,80 @@
+package utils;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+
+
+import db.DaoControl;
+import db.DataSource;
+import model.DataConfig;
+
+public class Const {
+	
+
+	//
+	
+	public static final String MIEN_NAM;
+	public static final String MIEN_TRUNG;
+	public static final String MIEN_BAC;
+	public static final String NAM;
+	public static final String BAC;
+	public static final String TRUNG;
+	public static final String NAME_NORTH;
+	public static String date = "";
+	public static final int QUANTITY_ATTRIBUTE = 6;
+
+	// connect control db
+	public static final String CLASS_NAME;
+	public static final String URL;
+	public static final String USER;
+	public static final String PASSWORD;
+	public static final int MAXIMUM_POOL_SIZE;
+
+	public static final String CODE_SOURCE_1;
+	public static final int ID_SOURCE_1;
+	static DataConfig config;
+
+	static {
+		Properties properties = loadProperties();
+		CLASS_NAME = properties.getProperty("database_driver");
+        URL = properties.getProperty("database_url");
+        USER = properties.getProperty("datasase_user");
+        PASSWORD = properties.getProperty("database_password");
+        MAXIMUM_POOL_SIZE = Integer.parseInt(properties.getProperty("MaximumPoolSize"));
+        CODE_SOURCE_1 = properties.getProperty("code_source_1");
+        ID_SOURCE_1 = Integer.parseInt(properties.getProperty("id_source_1"));
+        
+
+		MIEN_NAM = properties.getProperty("MIEN_NAM");
+		MIEN_TRUNG = properties.getProperty("MIEN_TRUNG");
+		MIEN_BAC = properties.getProperty("MIEN_BAC");
+		NAME_NORTH = "Miền Bắc";
+		NAM = properties.getProperty("NAM");
+		BAC = properties.getProperty("BAC");
+		TRUNG = properties.getProperty("TRUNG");
+
+	}
+
+	private static Properties loadProperties() {
+		Properties properties = new Properties();
+
+		try (InputStream input = new FileInputStream("src/main/resources/config.properties");
+				InputStreamReader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+
+			properties.load(reader);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("Lỗi khi đọc file properties.");
+		}
+
+		return properties;
+	}
+
+	public static void setDate(String date) {
+		Const.date = date;
+	}
+}

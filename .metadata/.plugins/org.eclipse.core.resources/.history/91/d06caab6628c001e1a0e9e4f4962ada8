@@ -1,0 +1,30 @@
+package db;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+public class DataSource {
+
+	private static final HikariDataSource dataSource;
+
+    static {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:mysql://localhost:3306/your_database_name");
+        config.setUsername("your_username");
+        config.setPassword("your_password");
+        config.setMaximumPoolSize(10);
+
+        dataSource = new HikariDataSource(config);
+    }
+
+    private DataSource() {}
+
+    public static Connection getConnection() throws SQLException {
+        return ds.getConnection();
+    }
+	
+	
+}

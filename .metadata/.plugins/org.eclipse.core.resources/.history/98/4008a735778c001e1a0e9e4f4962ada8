@@ -1,0 +1,8 @@
+package utils;
+
+import model.DataConfig;
+
+public class LoadConfig {
+	static DataConfig config;
+	
+}

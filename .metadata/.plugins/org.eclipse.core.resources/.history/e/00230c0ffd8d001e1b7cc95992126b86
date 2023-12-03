@@ -1,0 +1,46 @@
+package utils;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+
+import db.DataSource;
+import model.DataConfig;
+
+public class LoadConfig {
+	static DataConfig config;
+	// file
+		public static final String PATH;
+		public static final String NAME_FILE;
+		public static final String CSV_EXTENSION;
+		public static final String SOURCE_1;
+		
+		static {
+			 // Establish the initial database connection using the properties
+
+			PATH = config.getLocation();
+			NAME_FILE = config.getFileName();
+			CSV_EXTENSION = config.getFormat();
+
+			SOURCE_1 = config.getSourcePath();
+		}
+	
+	private static Properties loadProperties() {
+		Properties properties = new Properties();
+
+		try (InputStream input = new FileInputStream("src/main/resources/config.properties");
+				InputStreamReader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+
+			properties.load(reader);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("Lỗi khi đọc file properties.");
+		}
+
+		return properties;
+	}
+	
+}

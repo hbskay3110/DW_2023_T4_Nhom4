@@ -1,0 +1,84 @@
+package db;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import utils.Const;
+
+public class DataSource {
+
+    private static HikariConfig config;
+    private static HikariDataSource dataSource;
+
+    static {
+        loadDatabaseProperties(); // Load properties from file
+
+        config = new HikariConfig();
+        config.setDriverClassName(properties.getProperty("database_driver"));
+        config.setJdbcUrl(Const.URL);
+        config.setUsername(Const.USER);
+        config.setPassword(Const.PASSWORD);
+        config.setMaximumPoolSize(Const.MAXIMUM_POOL_SIZE);
+
+        dataSource = new HikariDataSource(config);
+    }
+
+    private DataSource() {
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
+
+    private static Properties loadDatabaseProperties() {
+        Properties properties = new Properties();
+
+        try (InputStream input = new FileInputStream("path/to/your/database.properties")) {
+            properties.load(input);
+
+            Const.CLASS_NAME = ;
+            Const.URL = properties.getProperty("database_url");
+            Const.USER = properties.getProperty("datasase_user");
+            Const.PASSWORD = properties.getProperty("database_password");
+            Const.MAXIMUM_POOL_SIZE = Integer.parseInt(properties.getProperty("MaximumPoolSize"));
+        } catch (IOException e) {
+            System.err.println("Error loading database properties: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        try (Connection connection = DataSource.getConnection()) {
+            if (connection != null) {
+                System.out.println("Connected!");
+
+                // Example query execution
+                String query = "SELECT * FROM data_configs";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+                     ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                    while (resultSet.next()) {
+                        // Process the results as needed
+                        String columnName = resultSet.getString("file_name");
+                        System.out.println(columnName);
+                    }
+
+                } catch (SQLException e) {
+                    System.out.println("Query execution error: " + e.getMessage());
+                }
+
+            }
+        } catch (SQLException e) {
+            System.out.println("Connection error: " + e.getMessage());
+        }
+    }
+}
