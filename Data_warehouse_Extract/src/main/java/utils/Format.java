@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import crawl.CrawlProvinceSource1;
+import model.ERegion;
 
 public class Format {
 	public static String formatWeekdaysFromText(String text) {
@@ -37,13 +38,13 @@ public class Format {
 
 	// dựa vao url để trả về tên các miền tương ứng
 	public static String generateArea(String url) {
-		if (url.contains(Const.MIEN_NAM)) {
-			return Const.NAM;
+		if (url.contains(ERegion.MIEN_NAM.getCode())) {
+			return ERegion.MIEN_NAM.getDescription();
 		}
-		if (url.contains(Const.MIEN_BAC)) {
-			return Const.BAC;
+		if (url.contains(ERegion.MIEN_BAC.getCode())) {
+			return ERegion.MIEN_BAC.getDescription();
 		}
-		return Const.TRUNG;
+		return ERegion.MIEN_TRUNG.getDescription();
 	}
 
 	// trả về đường dẫn đầy đủ và tên file csv

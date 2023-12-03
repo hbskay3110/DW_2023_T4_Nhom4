@@ -6,120 +6,110 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import model.DataConfig;
-import utils.Const;
 
 public class DaoControl {
-	
-	/*
-	 * hàm  addStatus(int id, String note ,String status)
-	 * Chức năng: thêm trạng thái 
-	 * */
-	public int addStatus(int id, String note ,String status) {
-		int result = 0;
-		try (Connection connection = DataSource.getConnection()) {
+
+    // Hàm thực hiện các truy vấn cập nhật (INSERT, UPDATE, DELETE)
+    private int executeUpdate(String query, Object... params) {
+        int result = 0;
+
+        // Mở và đóng kết nối tự động bằng try-with-resources
+        try (Connection connection = DataSource.getConnection()) {
             if (connection != null) {
-                String query = "INSERT INTO data_files ( id_config, note, status)"
-                		+ " VALUES (?,?,?)" ;
-                try {
-                	PreparedStatement preparedStatement = connection.prepareStatement(query);
-                		preparedStatement.setInt(1, id);
-                		preparedStatement.setString(2, note);
-                		preparedStatement.setString(3, status);
-                     result = preparedStatement.executeUpdate();
-
-               return result;
-
+                // Thực thi truy vấn cập nhật
+                try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                    setParameters(preparedStatement, params);
+                    result = preparedStatement.executeUpdate();
                 } catch (SQLException e) {
                     System.out.println("Query execution error: " + e.getMessage());
                 }
-
             }
         } catch (SQLException e) {
             System.out.println("Connection error: " + e.getMessage());
         }
-		 return result;
-	}
-	
-	/*
-	 * hàm getStatusToday()
-	 * Lấy ra trạng thái ngày hôm nay
-	 * */
-	public String getStatusToday() {
-		String status= "";
-		try (Connection connection = DataSource.getConnection()) {
+
+        return result;
+    }
+
+    // Hàm thực hiện các truy vấn truy vấn SELECT và ánh xạ kết quả với mapper
+    private <T> T executeQuery(String query, ResultSetMapper<T> mapper, Object... params) {
+        T result = null;
+
+        // Mở và đóng kết nối tự động bằng try-with-resources
+        try (Connection connection = DataSource.getConnection()) {
             if (connection != null) {
-                // Example query execution
-                String query = "SELECT F.status FROM data_configs AS C \r\n"
-                		+ "JOIN data_files AS F ON C.id = F.id_config\r\n"
-                		+ " WHERE F.status = 'CE' AND YEAR(F.created_at) = YEAR(NOW())\r\n"
-                		+ " AND MONTH(F.created_at) = MONTH(NOW()) AND DAY(F.created_at) = DAY(NOW())"
-                		+ " AND C.flag = 1"
-                		+ " LIMIT 1"
-                		;
+                // Thực thi truy vấn SELECT và ánh xạ kết quả
                 try (PreparedStatement preparedStatement = connection.prepareStatement(query);
-                     ResultSet resultSet = preparedStatement.executeQuery()) {
+                     ResultSet resultSet = setParametersAndExecuteQuery(preparedStatement, params)) {
 
-                    while (resultSet.next()) {
-                    	status = resultSet.getString("status");
-                    }
-                    return status;
-
+                    result = mapper.map(resultSet);
                 } catch (SQLException e) {
                     System.out.println("Query execution error: " + e.getMessage());
                 }
-               
-
             }
         } catch (SQLException e) {
             System.out.println("Connection error: " + e.getMessage());
         }
-		return status;
-		
-	}
-	
-	/*
-	 * hàm getDataConfig(String code , int id)
-	 * Nhận vào code và id để load lên thuộc tính cấu hình tương ứng
-	 * */
-	public  DataConfig getDataConfig(String code , int id) {
-		DataConfig rs = null;
-		try (Connection connection = DataSource.getConnection()) {
-            if (connection != null) {
-                // Example query execution
-                String query = "SELECT * FROM data_configs AS C"
-                		+ " WHERE (C.flag = 1) AND (C.code = ? OR C.id = ?)"
-                		+ " LIMIT 1"
-                		;
-                try {
-                	PreparedStatement preparedStatement = connection.prepareStatement(query);
-                		preparedStatement.setString(1, code);
-                		preparedStatement.setInt(2, id);
-                		ResultSet resultSet = preparedStatement.executeQuery();
-                	rs = new DataConfig();
-                    while (resultSet.next()) {
-                    	
-                    rs.setId(resultSet.getInt("id"));
-                    rs.setFlag(resultSet.getInt("flag"));
-                    rs.setCode(resultSet.getString("code"));
-                    rs.setSourcePath(resultSet.getString("source_path"));
-                    rs.setLocation(resultSet.getString("location"));
-                    rs.setFileName(resultSet.getString("file_name"));
-                    rs.setFormat(resultSet.getString("format"));
-                    rs.setSeparation(resultSet.getString("separation"));
-                    }
-                    return rs;
 
-                } catch (SQLException e) {
-                    System.out.println("Query execution error: " + e.getMessage());
-                }
-               
+        return result;
+    }
 
-            }
-        } catch (SQLException e) {
-            System.out.println("Connection error: " + e.getMessage());
+    // Hàm thiết lập các tham số cho PreparedStatement
+    private void setParameters(PreparedStatement preparedStatement, Object... params) throws SQLException {
+        for (int i = 0; i < params.length; i++) {
+            preparedStatement.setObject(i + 1, params[i]);
         }
-		return rs;
-	}
-	
+    }
 
+    // Hàm thiết lập các tham số cho PreparedStatement và thực hiện truy vấn SELECT
+    private ResultSet setParametersAndExecuteQuery(PreparedStatement preparedStatement, Object... params)
+            throws SQLException {
+        setParameters(preparedStatement, params);
+        return preparedStatement.executeQuery();
+    }
+
+    // Phương thức thêm mới trạng thái vào bảng data_files
+    public int addStatus(int id, String note, String status) {
+        String query = "INSERT INTO data_files (id_config, note, status) VALUES (?, ?, ?)";
+        return executeUpdate(query, id, note, status);
+    }
+
+    // Phương thức lấy trạng thái ngày hôm nay từ bảng data_files
+    public String getStatusToday() {
+        String query = "SELECT F.status FROM data_configs AS C "
+                + "JOIN data_files AS F ON C.id = F.id_config "
+                + "WHERE F.status = 'CE' AND YEAR(F.created_at) = YEAR(NOW()) "
+                + "AND MONTH(F.created_at) = MONTH(NOW()) AND DAY(F.created_at) = DAY(NOW()) "
+                + "AND C.flag = 1 LIMIT 1";
+        return executeQuery(query, rs -> {
+            if (rs.next()) {
+                return rs.getString("status");
+            }
+            return null;
+        });
+    }
+
+    // Phương thức lấy thông tin cấu hình từ bảng data_configs
+    public DataConfig getDataConfig(int id) {
+        String query = "SELECT * FROM data_configs AS C WHERE C.flag = 1 AND C.id = ? LIMIT 1";
+        return executeQuery(query, rs -> {
+            DataConfig dataConfig = new DataConfig();
+            if (rs.next()) {
+                dataConfig.setId(rs.getInt("id"));
+                dataConfig.setFlag(rs.getInt("flag"));
+                dataConfig.setCode(rs.getString("code"));
+                dataConfig.setSourcePath(rs.getString("source_path"));
+                dataConfig.setLocation(rs.getString("location"));
+                dataConfig.setFileName(rs.getString("file_name"));
+                dataConfig.setFormat(rs.getString("format"));
+                dataConfig.setSeparation(rs.getString("separation"));
+            }
+            return dataConfig;
+        }, id);
+    }
+
+    // Giao diện ánh xạ ResultSet thành một đối tượng T
+    private interface ResultSetMapper<T> {
+        T map(ResultSet rs) throws SQLException;
+    }
 }
