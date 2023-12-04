@@ -66,7 +66,7 @@ public class CrawlDataSource1 {
 								// Check if dataPrize already exists in the map
 								if (dataByPrize.containsKey(prize)) {
 									String existingData = dataByPrize.get(prize);
-									dataByPrize.put(prize, existingData + ", " + dataValue);
+									dataByPrize.put(prize, existingData + " " + dataValue);
 								} else {
 									dataByPrize.put(prize, dataValue);
 								}
