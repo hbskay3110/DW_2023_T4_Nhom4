@@ -89,8 +89,10 @@ public class CrawlDataSource1 {
 						list[5].add(regions);
 					}
 					Map<String, List<String>> data = new TreeMap<>();
-					data.put(ENameFieldCollection.LOCATION.getNameColumn(), list[ENameFieldCollection.LOCATION.getCol()]);
-					data.put(ENameFieldCollection.WEEKDAYS.getNameColumn(), list[ENameFieldCollection.WEEKDAYS.getCol()]);
+					data.put(ENameFieldCollection.LOCATION.getNameColumn(),
+							list[ENameFieldCollection.LOCATION.getCol()]);
+					data.put(ENameFieldCollection.WEEKDAYS.getNameColumn(),
+							list[ENameFieldCollection.WEEKDAYS.getCol()]);
 					data.put(ENameFieldCollection.DATE.getNameColumn(), list[ENameFieldCollection.DATE.getCol()]);
 					data.put(ENameFieldCollection.PRIZES.getNameColumn(), list[ENameFieldCollection.PRIZES.getCol()]);
 					data.put(ENameFieldCollection.RESULTS.getNameColumn(), list[ENameFieldCollection.RESULTS.getCol()]);
@@ -139,14 +141,14 @@ public class CrawlDataSource1 {
 		while (iterator.hasNext()) {
 			/*
 			 * 11.Lấy ra 1 tỉnh trong danh sách
-			 * */
-	        String province = iterator.next();
-	        List<String> locations = new ArrayList<>();
-	        List<String> weekdays = new ArrayList<>();
-	        List<String> date = new ArrayList<>();
-	        List<String> prize = new ArrayList<>();
-	        List<String> results = new ArrayList<>();
-	        List<String> regions = new ArrayList<>();
+			 */
+			String province = iterator.next();
+			List<String> locations = new ArrayList<>();
+			List<String> weekdays = new ArrayList<>();
+			List<String> date = new ArrayList<>();
+			List<String> prize = new ArrayList<>();
+			List<String> results = new ArrayList<>();
+			List<String> regions = new ArrayList<>();
 
 			/*
 			 * 12.Lấy url tỉnh đó
@@ -172,26 +174,25 @@ public class CrawlDataSource1 {
 			}
 
 			/*
-			 * 15.Ghi vào file data.csv trong D:/data/data.csv
-			 * 16->18 bên WriteToCSV.write
+			 * 15.Ghi vào file data.csv trong D:/data/data.csv 16->18 bên WriteToCSV.write
 			 */
-			
+
 			boolean isWriteSuccess = WriteToCSV.write(data.get("locations"), data.get("weekdays"), data.get("date"),
 					data.get("prizes"), data.get("results"), data.get("regions"));
 			/*
 			 * 19.Kiểm tra có ghi thành công hay không?
-			 * */
+			 */
 			if (isWriteSuccess) {
 				result = true;
 			} else {
 				/*
 				 * 19.1 Xóa file data.csv
-				 * */
+				 */
 				File file = new File(Format.generateFileName());
 				file.delete();
 				/*
 				 * 19.2 Chèn 1 dòng vào bảng data_files với status = "FE"
-				 * */
+				 */
 				this.control.addStatus(Const.idSource_1, "Fail Extract", EStatus.FE.name());
 				// end
 				result = false;
@@ -214,10 +215,14 @@ public class CrawlDataSource1 {
 		 * 6.Kiểm tra xem ngày hôm này đã chạy chưa? bằng cách lấy 1 dòng trong bảng
 		 * data_files với điều kiện id bằng id nhận từ arguments , thời gian là ngày hôm
 		 * nay và status = "CE"
+		 * 
+		 * Nếu có nhập ngày thì kiểm tra xem ngày đó đã chạy hoàn thành chưa
 		 */
-		boolean isExtractCompleteToday = EStatus.CE.name().equals(this.control.getStatusToday(Const.idSource_1)) ? true
-				: false;
-		if (!isExtractCompleteToday) {
+		
+		boolean isExtractComplete = Const.date.isEmpty()
+				? EStatus.CE.name().equals(this.control.getStatusToday(Const.idSource_1)) ? true : false
+				: EStatus.CE.name().equals(this.control.getStatusByDate(Const.idSource_1, Const.date)) ? true : false;
+		if (!isExtractComplete) {
 			/*
 			 * 7. Chèn 1 dòng vào bảng data_files với status = "BE"
 			 */
@@ -232,28 +237,27 @@ public class CrawlDataSource1 {
 			 */
 			if (listProvinceTodays.isEmpty()) {
 				/*
-				 * 9.1 Chèn 1 dòng vào bảng data_files với status =
-				 * "FE"
+				 * 9.1 Chèn 1 dòng vào bảng data_files với status = "FE"
 				 */
 				this.control.addStatus(Const.idSource_1, "Fail Extract", EStatus.FE.name());
 				return;
 			}
 			/*
 			 * 10 -> 19
-			 * */
+			 */
 			boolean isSuccess = isExtractAndWriteCSV(listProvinceTodays);
 			/*
 			 * 20.Kiểm tra quá trình extract và ghi vào file có thành công hay không?
-			 * */
+			 */
 			if (isSuccess) {
 				/*
 				 * 20.1.Chèn 1 dòng vào bảng data_files với status = "CE"
-				 * */
+				 */
 				this.control.addStatus(Const.idSource_1, "Complete Extract", EStatus.CE.name());
 			} else {
 				/*
 				 * 20.2 Chèn 1 dòng vào bảng data_files với status = "FE"
-				 * */
+				 */
 				this.control.addStatus(Const.idSource_1, "Fail Extract", EStatus.FE.name());
 				return;
 			}
@@ -261,8 +265,9 @@ public class CrawlDataSource1 {
 		} else {
 			/*
 			 * Kết thúc bước 6
-			 * */
-			System.out.println("Hôm nay bạn đã crawl rồi!");
+			 */
+			System.out.println(Const.date == null ? "Hôm nay bạn đã crawl rồi!"
+					: "Bạn đã crawl dữ liệu ngày " + Const.date + " rồi!");
 			return;
 		}
 	}
