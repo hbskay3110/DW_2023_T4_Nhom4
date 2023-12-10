@@ -1,0 +1,18 @@
+package db;
+
+public class MySqlConnectionPool {
+
+	private static MySqlConnectionPool instance = null;
+
+	public MySqlConnectionPool getInstance() {
+		if(instance == null) {
+			return instance = new MySqlConnectionPool();
+		}
+		return instance;
+	}
+	
+	private MySqlConnectionPool() {
+	}
+	
+	
+}

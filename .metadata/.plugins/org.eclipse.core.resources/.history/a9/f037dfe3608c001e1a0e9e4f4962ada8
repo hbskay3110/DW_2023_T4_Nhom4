@@ -1,0 +1,18 @@
+package db;
+
+public class ConnectDB {
+
+	private final ConnectDB instance = null;
+
+	public ConnectDB getInstance() {
+		if(instance == null) {
+			return new ConnectDB();
+		}
+		return instance;
+	}
+	
+	private ConnectDB() {
+	}
+	
+	
+}

@@ -1,0 +1,87 @@
+package utils;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+
+import db.DaoControl;
+import model.DataConfig;
+
+public class Const {
+	// file
+	public static final String PATH;
+	public static final String NAME_FILE;
+	public static final String CSV_EXTENSION;
+	public static final String NAME_SHEET;
+
+	// 
+	public static final String SOURCE_1;
+	public static final String MIEN_NAM;
+	public static final String MIEN_TRUNG;
+	public static final String MIEN_BAC;
+	public static final String NAM;
+	public static final String BAC;
+	public static final String TRUNG;
+	public static final String NAME_NORTH;
+	public static String date = "";
+	public static final int QUANTITY_ATTRIBUTE = 6;
+
+	// connect control db
+//	public static final String CLASS_NAME;
+//	public static final String URL;
+//	public static final String USER;
+//	public static final String PASSWORD;
+//	public static final int MAXIMUM_POOL_SIZE;
+	
+	public static final String CODE_SOURCE_1;
+	public static final int ID_SOURCE_1;
+	 
+
+	static {
+		Properties properties = loadProperties();
+		DataConfig  config ;
+		
+		CODE_SOURCE_1 = properties.getProperty("code_source_1");
+		ID_SOURCE_1 = Integer.parseInt(properties.getProperty("id_source_1"));
+		// load data config
+		config = new DaoControl().getDataConfig(CODE_SOURCE_1, ID_SOURCE_1);
+		PATH = config.getLocation();
+		NAME_FILE = config.getFileName();
+		CSV_EXTENSION = config.getFormat();
+		
+		NAME_SHEET = properties.getProperty("NAME_SHEET");
+
+		SOURCE_1 = config.getSourcePath();
+		
+		MIEN_NAM = properties.getProperty("MIEN_NAM");
+		MIEN_TRUNG = properties.getProperty("MIEN_TRUNG");
+		MIEN_BAC = properties.getProperty("MIEN_BAC");
+		NAME_NORTH = "Miền Bắc";
+		NAM = properties.getProperty("NAM");
+		BAC = properties.getProperty("BAC");
+		TRUNG = properties.getProperty("TRUNG");
+		
+	}
+
+	private static Properties loadProperties() {
+		Properties properties = new Properties();
+
+		try (InputStream input = new FileInputStream("src/main/resources/config.properties");
+				InputStreamReader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+
+			properties.load(reader);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("Lỗi khi đọc file properties.");
+		}
+
+		return properties;
+	}
+
+	public static void setDate(String date) {
+		Const.date = date;
+	}
+}

@@ -1,0 +1,63 @@
+package db;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import utils.Const;
+
+public class DataSource {
+
+	private static HikariConfig config ;
+	private static HikariDataSource dataSource;
+
+	static {
+		config = new HikariConfig();
+		config.setDriverClassName(Const.CLASS_NAME);
+		config.setJdbcUrl(Const.URL);
+		config.setUsername(Const.USER);
+		config.setPassword(Const.PASSWORD);
+		config.setMaximumPoolSize(Const.MAXIMUM_POOL_SIZE);
+
+		dataSource = new HikariDataSource(config);
+	}
+
+	private DataSource() {
+	}
+
+	public static Connection getConnection() throws SQLException {
+		return dataSource.getConnection();
+	}
+	
+	public static void main(String[] args) {
+		try (Connection connection = DataSource.getConnection()) {
+            if (connection != null) {
+                System.out.println("Connected!");
+
+                // Example query execution
+                String query = "SELECT * FROM your_table";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+                     ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                    while (resultSet.next()) {
+                        // Process the results as needed
+                        String columnName = resultSet.getString("column_name");
+                        System.out.println(columnName);
+                    }
+
+                } catch (SQLException e) {
+                    System.out.println("Query execution error: " + e.getMessage());
+                }
+
+            }
+        } catch (SQLException e) {
+            System.out.println("Connection error: " + e.getMessage());
+        }
+	}
+	
+	
+
+}

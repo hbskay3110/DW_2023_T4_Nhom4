@@ -1,0 +1,18 @@
+NAME_FILE=lottery
+PATH=D:\\data\\
+CSV_EXTENSION=.csv
+NAME_SHEET=Data
+DATE_FORMAT=ddMMyyyy
+
+SOURCE_1=https://www.kqxs.vn
+MIEN_NAM=/mien-nam
+MIEN_TRUNG=/mien-trung
+MIEN_BAC=/mien-bac
+NAM=Mi\u1EC1n Nam
+BAC=Mi\u1EC1n B\u1EAFc
+TRUNG=Mi\u1EC1n Trung
+
+database.driver=com.mysql.cj.jdbc.Driver
+database.url=jdbc:mysql://localhost:3306/control
+datasese.user=root
+database.password=1234

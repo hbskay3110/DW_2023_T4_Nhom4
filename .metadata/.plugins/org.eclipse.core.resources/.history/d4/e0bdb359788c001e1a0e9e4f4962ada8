@@ -1,0 +1,5 @@
+database.dialect=
+database.driver=com.mysql.cj.jdbc.Driver
+database.url=jdbc:/
+datasese.user=root
+database.password=1234

@@ -1,0 +1,176 @@
+package crawl;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.jsoup.Connection.Response;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import db.DaoControl;
+import model.EStatus;
+import utils.Const;
+import utils.Format;
+
+public class CrawlDataSource1 {
+
+	DaoControl control;
+
+	public CrawlDataSource1() {
+		control = new DaoControl();
+	}
+
+	@SafeVarargs
+	public static Map<String, List<String>> crawDataProvinceSource1(String url, List<String>... list) {
+		Response response = null;
+		if (!checkLenghtListParam(list)) {
+			System.out.println("Not enough list data");
+			return null;
+		}
+		try {
+			response = ConnectionSource1.connectLink(Const.SOURCE_1.trim() + url + CrawlProvinceSource1.paramDate);
+			// Check if the request was successful
+			if (response.statusCode() == 200) {
+				Document document = response.parse();
+
+				// Find the table with the specified class
+				Element table = document.select("table.table-result-lottery").first();
+
+				// Initialize a Map to organize data by data-prize value
+				Map<String, String> dataByPrize = new HashMap<>();
+
+				// Check if the table is found
+				if (table != null) {
+					// Iterate through rows in the table
+					for (Element row : table.select("tr")) {
+						Elements spanElements = row.select("span.number");
+						Elements cells = row.select("td.prize");
+						if (!cells.isEmpty()) {
+							// Iterate through the <span> elements
+							for (Element spanElement : spanElements) {
+								String dataValue = spanElement.attr("data-value");
+								String prize = cells.get(0).text().trim();
+
+								// Check if dataPrize already exists in the map
+								if (dataByPrize.containsKey(prize)) {
+									String existingData = dataByPrize.get(prize);
+									dataByPrize.put(prize, existingData + ", " + dataValue);
+								} else {
+									dataByPrize.put(prize, dataValue);
+								}
+							}
+						}
+					}
+					// nap vao danh sach
+					for (Map.Entry<String, String> entry : dataByPrize.entrySet()) {
+						String locations = document.select("button.btn-select-lottery").text().trim();
+						String regions = Format.generateArea(url);
+						String weekdays = Format.formatWeekdaysFromText(table.select("h2").text().trim());
+						String prizes = entry.getKey();
+						String date = Format.formatDateFromText(table.select("h2").text().trim());
+						String results = entry.getValue();
+						list[0].add(locations);
+						list[1].add(weekdays);
+						list[2].add(date);
+						list[3].add(prizes);
+						list[4].add(results);
+						list[5].add(regions);
+					}
+					Map<String, List<String>> data = new TreeMap<>();
+					data.put("locations", list[0]);
+					data.put("weekdays", list[1]);
+					data.put("date", list[2]);
+					data.put("prizes", list[3]);
+					data.put("results", list[4]);
+					data.put("regions", list[5]);
+					return data;
+				} else {
+					System.out.println("Table not found on the page.");
+				}
+			} else {
+				System.out.println("Request failed with status code: " + response.statusCode());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static boolean checkLenghtListParam(List<String>... lists) {
+		if (lists.length == Const.QUANTITY_ATTRIBUTE)
+			return true;
+		return false;
+
+	}
+	public boolean isExtractSuccess(ArrayList<String>listProvinceTodays) {
+		boolean result = true;
+		for (String province : listProvinceTodays) {
+			// Sample data (replace with actual data)
+			List<String> locations = new ArrayList<>();
+			List<String> weekdays = new ArrayList<>();
+			List<String> date = new ArrayList<>();
+			List<String> prize = new ArrayList<>();
+			List<String> results = new ArrayList<>();
+			List<String> regions = new ArrayList<>();
+
+			String urlLocation = CrawlProvinceSource1.getUrls(province);
+			Map<String, List<String>> data = crawDataProvinceSource1(urlLocation, locations, weekdays, date, prize,
+					results, regions);
+			// check crawl isCrawlSuccess
+			boolean isCrawlSuccess = !data.isEmpty();
+			if (!isCrawlSuccess) {
+				// insert status FE
+				this.control.addStatus(Const.ID_SOURCE_1, "Fail Extract", EStatus.FE.name());
+				// and
+				// end
+				result=false;
+				break;
+				
+			}
+
+			// write data
+			boolean isWriteSuccess = WriteToCSV.write(data.get("locations"), data.get("weekdays"), data.get("date"),
+					data.get("prizes"), data.get("results"), data.get("regions"));
+			if (isWriteSuccess) {
+				// insert status CE
+				this.control.addStatus(Const.ID_SOURCE_1, "Complete Extract", EStatus.CE.name());
+				result = true;
+			} else {
+				// insert status FE
+				this.control.addStatus(Const.ID_SOURCE_1, "Fail Extract", EStatus.FE.name());
+				// and
+				// delete file lottery.csv
+//				File file = new File(Format.generateFileName());
+//				file.delete();
+				// end
+			}
+		
+	}
+		return result;
+	}
+
+	// thuc thi source 1
+	public void execSource1() {
+
+		// Get 1 row check status "CE" and created_at = now() from table controls
+		boolean isExtractCompleteToday = this.control.getStatusToday() == EStatus.CE.name() ? true : false;
+		if (!isExtractCompleteToday) {
+			// insert into status BE
+			this.control.addStatus(Const.ID_SOURCE_1, "Begin Extract", EStatus.BE.name());
+			// crawl data from website
+			ArrayList<String> listProvinceTodays = (ArrayList<String>) CrawlProvinceSource1.getProvinces();
+			
+
+		} else {
+			return;
+		}
+	}
+
+}
