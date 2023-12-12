@@ -41,45 +41,18 @@ public class DataMartService {
 		}
 	}
 
-	/*
-	 * Sao chép bảng: thuộc tính và dữ liệu từ datawarehouse
-	 */
-	// Trong DataMartService
-	public boolean copyTable(String tableName) {
-		boolean result = false;
-		// Lấy thông tin cột và kiểu dữ liệu từ DataWarehouse
-		try (Handle handle = dataWarehouseJdbi.open()) {
-			if (tableExists(tableName, handle)) {
-				System.out.println("Table " + tableName + " already exists. Skipping creation.");
-				return false;
-			}
-			List<ColumnInfo> columnInfoList = handle.createQuery("DESCRIBE " + tableName).map(new ColumnInfoMapper())
-					.list();
-
-			// Tạo câu truy vấn CREATE TABLE cho DataMart
-			StringBuilder createTableQuery = new StringBuilder("CREATE TABLE :table (");
-			for (ColumnInfo columnInfo : columnInfoList) {
-				createTableQuery.append(columnInfo.getColumnName()).append(" ").append(columnInfo.getColumnType())
-						.append(" ").append(columnInfo.getColumnNull()).append(" ").append(columnInfo.getColumnKey())
-						.append(" ").append(columnInfo.getColumnDefault()).append(" ")
-						.append(columnInfo.getColumnExtra()).append(", ");
-			}
-			createTableQuery.setLength(createTableQuery.length() - 2); // Xóa dấu phẩy cuối cùng
-			createTableQuery.append(")");
-
-			// Thực hiện truy vấn CREATE TABLE trong DataMart
-			try (Handle martHandle = dataMartJdbi.open()) {
-				result = martHandle.createUpdate(createTableQuery.toString())
-				 .bind("table", tableName)
-                 .execute()>0
-                 ? true :false;
-               return result;
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
+	// Tạo câu truy vấn CREATE TABLE từ danh sách thông tin cột
+	private String generateCreateTableQuery(String tableName, List<ColumnInfo> columnInfoList) {
+		StringBuilder createTableQuery = new StringBuilder("CREATE TABLE " + tableName + " (");
+		for (ColumnInfo columnInfo : columnInfoList) {
+			createTableQuery.append(columnInfo.getColumnName()).append(" ").append(columnInfo.getColumnType())
+					.append(" ").append(columnInfo.getColumnNull()).append(" ").append(columnInfo.getColumnKey())
+					.append(" ").append(columnInfo.getColumnDefault()).append(" ").append(columnInfo.getColumnExtra())
+					.append(", ");
 		}
+		createTableQuery.setLength(createTableQuery.length() - 2); // Xóa dấu phẩy cuối cùng
+		createTableQuery.append(")");
+		return createTableQuery.toString();
 	}
 
 	public List<String> getColumnInfo(String table) {
@@ -101,7 +74,91 @@ public class DataMartService {
 		}
 	}
 
-	public boolean copyData(String table) {
+	// hàm copy data từ bảng này sang bảng khác trong cùng db
+	private boolean copyData(String sourceTable, String destinationTable, Handle destinationHandle) {
+
+		boolean result = false;
+		// Thực hiện lệnh sao chép dữ liệu
+		String insertQuery = "INSERT INTO " + destinationTable + " SELECT * FROM " + sourceTable;
+		result = destinationHandle.execute(insertQuery) > 0 ? true : false;
+		return result;
+	}
+
+	// tạo bảng tạm ở data mart
+	public String createTableTempFromMainTable(String table) {
+		String tempTable = table + "_temps";
+		try (Handle martHandle = dataMartJdbi.open()) {
+			if (tableExists(tempTable, martHandle)) {
+				System.out.println("Table " + tempTable + " already exists. Skipping creation.");
+				return null;
+			}
+			List<ColumnInfo> columnInfoList = martHandle.createQuery("DESCRIBE " + table).map(new ColumnInfoMapper())
+					.list();
+			String createTableQuery = generateCreateTableQuery(tempTable, columnInfoList);
+
+			martHandle.execute(createTableQuery);
+			// Thực hiện truy vấn CREATE TABLE trong DataMart
+			return tempTable;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	// 10.1 copy data từ bảng chính ta bảng tạm
+	public boolean copyToDataTableInMart(String sourceTable, String destinationTable) {
+		boolean result = false;
+		try (Handle destinationHandle = dataMartJdbi.open()) {
+			result = this.copyData(sourceTable, destinationTable, destinationHandle);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+
+	}
+
+	// 10.2 Xóa dữ liệu trong bảng
+	public void truncateTable(String table) {
+		try (Handle handle = dataMartJdbi.open()) {
+			handle.execute("TRUNCATE TABLE " + table);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * 11. tạo bảng Sao chép bảng: thuộc tính và dữ liệu từ datawarehouse
+	 */
+	public boolean copyTable(String tableName) {
+		// Lấy thông tin cột và kiểu dữ liệu từ DataWarehouse
+		try (Handle handle = dataWarehouseJdbi.open()) {
+			if (tableExists(tableName, handle)) {
+				System.out.println("Table " + tableName + " already exists. Skipping creation.");
+				return false;
+			}
+			List<ColumnInfo> columnInfoList = handle.createQuery("DESCRIBE " + tableName).map(new ColumnInfoMapper())
+					.list();
+
+			// Tạo câu truy vấn CREATE TABLE cho DataMart
+			String createTableQuery = generateCreateTableQuery(tableName, columnInfoList);
+
+			// Thực hiện truy vấn CREATE TABLE trong DataMart
+			try (Handle martHandle = dataMartJdbi.open()) {
+				martHandle.execute(createTableQuery.toString());
+				return true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	// 13 hàm copy dữ liệu từ bảng trong db datawarehouse sang bảng trong db
+	// datamart
+	public boolean copyDataFromDatawarehouseToDatamart(String table) {
 		boolean result = false;
 		try (Handle sourceHandle = dataWarehouseJdbi.open(); Handle destinationHandle = dataMartJdbi.open()) {
 
@@ -116,14 +173,13 @@ public class DataMartService {
 				System.out.println("Destination table " + table + " does not exist.");
 				return result;
 			}
+//				if()
+
 			String sourceTable = "datawarehouse." + table;
 			String destinationTable = "datamart." + table;
 
-			// Thực hiện lệnh sao chép dữ liệu
-			String insertQuery = "INSERT INTO " + destinationTable + " SELECT * FROM " + sourceTable;
-
-			result = destinationHandle.execute(insertQuery) > 0 ? true : false;
-			System.out.println("Data copied from " + destinationTable + " to " + sourceTable + " successfully.");
+			result = this.copyData(sourceTable, destinationTable, destinationHandle);
+			System.out.println("Data copied from " + sourceTable + " to " + destinationTable + " successfully.");
 			return result;
 
 		} catch (Exception e) {
@@ -131,6 +187,31 @@ public class DataMartService {
 			return false;
 		}
 	}
+
+	// 14
+	// 14.1 chèn CLM và end
+	// 14.2 copy data từ bảng chính ta bảng tạm
+//		public boolean copyToDataTableInMart(String sourceTable, String destinationTable) {
+//			boolean result = false;
+//			try (Handle destinationHandle = dataMartJdbi.open()) {
+//				result = this.copyData(sourceTable, destinationTable, destinationHandle);
+//
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//
+//			return result;
+//
+//		}
+	// 14.3 truncate bảng tạm
+
+//		private void truncateTable(String table) {
+//			try (Handle handle = dataMartJdbi.open()) {
+//				handle.execute("TRUNCATE TABLE " + table);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
 
 	public static void main(String[] args) {
 //		// Thực hiện sao chép bảng từ DataWarehouse sang DataMart
@@ -140,7 +221,10 @@ public class DataMartService {
 			String tableNameToCopy = table; // Thay thế bằng tên bảng thực tế
 			dataMartService.copyTable(tableNameToCopy);
 		}
-		dataMartService.copyData("result_by_day_south_aggregates");
+		dataMartService.copyDataFromDatawarehouseToDatamart("result_by_day_south_aggregates");
+
+		String tableCopy = dataMartService.createTableTempFromMainTable("result_by_day_south_aggregates");
+		dataMartService.copyToDataTableInMart("result_by_day_south_aggregates", tableCopy);
 
 	}
 

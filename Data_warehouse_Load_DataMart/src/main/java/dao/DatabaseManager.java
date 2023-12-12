@@ -7,10 +7,12 @@ import java.util.Properties;
 import org.jdbi.v3.core.Jdbi;
 
 public class DatabaseManager {
+	
 	private static final Jdbi controlJdbi = createJdbi(EDatabase.CONTROL.toString().toLowerCase());
     private static final Jdbi datawarehouseJdbi = createJdbi(EDatabase.DATAWAREHOUSE.toString().toLowerCase());
     private static final Jdbi datamartJdbi = createJdbi(EDatabase.DATAMART.toString().toLowerCase());
 
+    //2 tạo connect db
     private static Jdbi createJdbi(String dbName) {
         Properties properties = loadProperties(dbName);
         return Jdbi.create(
@@ -20,7 +22,7 @@ public class DatabaseManager {
         );
     }
  
-    // load dữ liệu từ file database.properties
+    //1. load dữ liệu từ file database.properties
 
     private static Properties loadProperties(String dbName) {
         Properties prop = new Properties();
@@ -55,7 +57,7 @@ public class DatabaseManager {
         
         // Thực hiện một truy vấn từ ControlService
         ControlService controlService = new ControlService();
-        String status = controlService.getStatusToday(1);
+        String status = controlService.getStatusAggregateToday(1);
         System.out.println("Status today: " + status);
         
         

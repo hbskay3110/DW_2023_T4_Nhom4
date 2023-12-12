@@ -13,5 +13,14 @@ public class Main {
 		Const.setDate(date_lottery);
 		CrawlDataSource1 s1 = new CrawlDataSource1();
 		s1.execSource1();
+		
+		// xét khoảng ngày cần crawl
+//		for (int i = 8; i <= 12; i++) {
+//			Const.setIdSource_1(1);
+//			// xét ngày cần chạy ( nếu có)
+//			Const.setDate(i + "-12-2023");
+//			CrawlDataSource1 s = new CrawlDataSource1();
+//			s1.execSource1();
+//		}
 	}
 }

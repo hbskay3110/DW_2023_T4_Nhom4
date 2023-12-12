@@ -12,7 +12,7 @@ public class DataWarehouseService {
      */
  // Trong DataWarehouseService
     public List<String> getAggregateTables() {
-        String keyword = "aggregate";
+        String keyword = "aggregates";
 
         return dataWarehouseJdbi.withHandle(handle -> {
             // Sử dụng truy vấn SQL để lấy danh sách các bảng có chứa từ khóa 'aggregate'

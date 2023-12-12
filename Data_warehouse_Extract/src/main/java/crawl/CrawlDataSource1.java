@@ -23,9 +23,11 @@ import utils.Format;
 public class CrawlDataSource1 {
 
 	DaoControl control;
+	String dateParam;
 
 	public CrawlDataSource1() {
 		control = new DaoControl();
+		dateParam = new CrawlProvinceSource1().paramDate;
 	}
 
 	/*
@@ -40,7 +42,7 @@ public class CrawlDataSource1 {
 			return null;
 		}
 		try {
-			response = ConnectionSource1.connectLink(Const.SOURCE_1.trim() + url + CrawlProvinceSource1.paramDate);
+			response = ConnectionSource1.connectLink(Const.SOURCE_1.trim() + url + dateParam);
 			// Check if the request was successful
 			if (response.statusCode() == 200) {
 				Document document = response.parse();
@@ -230,7 +232,7 @@ public class CrawlDataSource1 {
 			/*
 			 * 8. Crawl dữ liệu từ trang web lấy ra danh sách tỉnh ngày hôm nay xổ số
 			 */
-			ArrayList<String> listProvinceTodays = (ArrayList<String>) CrawlProvinceSource1.getProvinces();
+			ArrayList<String> listProvinceTodays = (ArrayList<String>) new CrawlProvinceSource1().getProvinces();
 
 			/*
 			 * 9. Kiểm tra danh sách tỉnh có trống hay không?
