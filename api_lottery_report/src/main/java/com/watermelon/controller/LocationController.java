@@ -29,18 +29,18 @@ public class LocationController {
 	@Autowired
 	private LocationService locationService;
 
-	@GetMapping("/location/{id}")
-	public ResponseEntity<ResponseObject> getLocationById(@PathVariable int id) {
-
-		Optional<LocationResponseDTO> locationResponse = Optional.of(locationService.getLocationById(id));
-
-		return locationResponse.isPresent()
-				? ResponseEntity.status(HttpStatus.OK).body(
-						new ResponseObject(locationResponse, EStatus.SUCCESS.getStatus(), EStatus.SUCCESS.getTitle(),EStatus.SUCCESS.getDescription()))
-				: ResponseEntity.status(HttpStatus.NOT_FOUND)
-						.body(new ResponseObject(null, EStatus.NOT_FOUND.getStatus(), EStatus.NOT_FOUND.getTitle(),EStatus.NOT_FOUND.getDescription()));
-
-	}
+//	@GetMapping("/location/{id}")
+//	public ResponseEntity<ResponseObject> getLocationById(@PathVariable int id) {
+//
+//		Optional<LocationResponseDTO> locationResponse = Optional.of(locationService.getLocationById(id));
+//
+//		return locationResponse.isPresent()
+//				? ResponseEntity.status(HttpStatus.OK).body(
+//						new ResponseObject(locationResponse, EStatus.SUCCESS.getStatus(), EStatus.SUCCESS.getTitle(),EStatus.SUCCESS.getDescription()))
+//				: ResponseEntity.status(HttpStatus.NOT_FOUND)
+//						.body(new ResponseObject(null, EStatus.NOT_FOUND.getStatus(), EStatus.NOT_FOUND.getTitle(),EStatus.NOT_FOUND.getDescription()));
+//
+//	}
 	@GetMapping("/regions")
     public ResponseEntity<ResponseObject> getAllRegions() {
         Optional< List<RegionResponseDTO>> regions = Optional.of(locationService.getAllRegions());

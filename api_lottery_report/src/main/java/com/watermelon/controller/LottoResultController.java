@@ -36,14 +36,14 @@ public class LottoResultController {
 	@Autowired
 	private LottoResultRepository lottoResultRepository;
 
-	@GetMapping("/MN")
-	public List<LocationResult> getAllLoteryResult() {
-		Map<String, LocationResult> locationResults = new HashMap<>();
-		List<LottoResultEntity> lottoResultEntities = lottoResultRepository.findAll();
-		List<LocationResult> finalResult = getData(locationResults, lottoResultEntities);
-		return finalResult;
-
-	}
+//	@GetMapping("/MN")
+//	public List<LocationResult> getAllLoteryResult() {
+//		Map<String, LocationResult> locationResults = new HashMap<>();
+//		List<LottoResultEntity> lottoResultEntities = lottoResultRepository.findAll();
+//		List<LocationResult> finalResult = getData(locationResults, lottoResultEntities);
+//		return finalResult;
+//
+//	}
 
 	@GetMapping("/{location}")
 	public List<LocationResult> getResultByLocation(@PathVariable(value = "location") String location) {
