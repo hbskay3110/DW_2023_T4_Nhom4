@@ -98,8 +98,8 @@ public class DaoControl {
 	 */
 	public String getStatusToday(int id) {
 		String query = "SELECT F.status FROM data_configs AS C " + "JOIN data_files AS F ON F.id_config = ? "
-				+ "WHERE F.status = 'CE' AND YEAR(F.created_at) = YEAR(NOW()) "
-				+ "AND MONTH(F.created_at) = MONTH(NOW()) AND DAY(F.created_at) = DAY(NOW()) " + "LIMIT 1";
+				+ "WHERE F.status = 'CE' AND YEAR(F.dateRun) = YEAR(NOW()) "
+				+ "AND MONTH(F.dateRun) = MONTH(NOW()) AND DAY(F.dateRun) = DAY(NOW()) " + "LIMIT 1";
 		return executeQuery(query, rs -> {
 			if (rs.next()) {
 				return rs.getString("status");

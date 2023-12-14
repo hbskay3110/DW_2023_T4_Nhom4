@@ -15,12 +15,12 @@ public class Main {
 		s1.execSource1();
 		
 		// xét khoảng ngày cần crawl
-//		for (int i = 8; i <= 12; i++) {
+//		for (int i = 13; i <= 13; i++) {
 //			Const.setIdSource_1(1);
 //			// xét ngày cần chạy ( nếu có)
 //			Const.setDate(i + "-12-2023");
 //			CrawlDataSource1 s = new CrawlDataSource1();
-//			s1.execSource1();
+//			s.execSource1();
 //		}
 	}
 }
