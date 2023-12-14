@@ -1,4 +1,8 @@
 # Getting Started with Create React App
+## Components of the web interface include:
+-	Node js phiên bản v18.18.0
+-	React JS phiên bản 18.2.0
+-	Cùng các thư viện như Router , MDB (boostrap 4)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
