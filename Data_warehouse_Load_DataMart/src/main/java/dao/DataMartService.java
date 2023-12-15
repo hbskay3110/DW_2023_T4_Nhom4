@@ -12,8 +12,21 @@ import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
 
 public class DataMartService {
-	private final Jdbi dataMartJdbi = DatabaseManager.getDatamartJdbi();
-	private final Jdbi dataWarehouseJdbi = DatabaseManager.getDatawarehouseJdbi();
+	public static DataMartService instance;
+	public static DataMartService getInstance() {
+		if(instance == null) {
+			instance = new DataMartService();
+		}
+		return instance;
+	}
+
+	private static Jdbi dataMartJdbi = DatabaseManager.getDatamartJdbi();
+	private static Jdbi dataWarehouseJdbi = DatabaseManager.getDatawarehouseJdbi();
+	
+	
+	private DataMartService() {
+		// TODO Auto-generated constructor stub
+	}
 
 	private static class ColumnInfoMapper implements RowMapper<ColumnInfo> {
 		@Override
@@ -29,7 +42,7 @@ public class DataMartService {
 		}
 	}
 
-	public boolean tableExists(String tableName, Handle handle) {
+	public static boolean tableExists(String tableName, Handle handle) {
 		try {
 			// Kiểm tra xem bảng đã tồn tại hay không
 			List<String> existingTables = handle.createQuery("SHOW TABLES LIKE :table").bind("table", tableName)
@@ -42,7 +55,7 @@ public class DataMartService {
 	}
 
 	// Tạo câu truy vấn CREATE TABLE từ danh sách thông tin cột
-	private String generateCreateTableQuery(String tableName, List<ColumnInfo> columnInfoList) {
+	private static String generateCreateTableQuery(String tableName, List<ColumnInfo> columnInfoList) {
 		StringBuilder createTableQuery = new StringBuilder("CREATE TABLE " + tableName + " (");
 		for (ColumnInfo columnInfo : columnInfoList) {
 			createTableQuery.append(columnInfo.getColumnName()).append(" ").append(columnInfo.getColumnType())
@@ -75,7 +88,7 @@ public class DataMartService {
 	}
 
 	// hàm copy data từ bảng này sang bảng khác trong cùng db
-	private boolean copyData(String sourceTable, String destinationTable, Handle destinationHandle) {
+	private static boolean copyData(String sourceTable, String destinationTable, Handle destinationHandle) {
 
 		boolean result = false;
 		// Thực hiện lệnh sao chép dữ liệu
@@ -85,9 +98,10 @@ public class DataMartService {
 	}
 
 	// tạo bảng tạm ở data mart
-	public String createTableTempFromMainTable(String table) {
+	public static String createTableTempFromMainTable(String table) {
 		String tempTable = table + "_temps";
 		try (Handle martHandle = dataMartJdbi.open()) {
+			// 10.1 Kiểm tra xem bảng tạm đã có hay chưa
 			if (tableExists(tempTable, martHandle)) {
 				System.out.println("Table " + tempTable + " already exists. Skipping creation.");
 				return null;
@@ -105,7 +119,7 @@ public class DataMartService {
 		}
 	}
 
-	// 10.1 copy data từ bảng chính ta bảng tạm
+	//Copy ra bảng tạm
 	public boolean copyToDataTableInMart(String sourceTable, String destinationTable) {
 		boolean result = false;
 		try (Handle destinationHandle = dataMartJdbi.open()) {
@@ -119,8 +133,8 @@ public class DataMartService {
 
 	}
 
-	// 10.2 Xóa dữ liệu trong bảng
-	public void truncateTable(String table) {
+	// Truncate dữ liệu trong bảng
+	public static void truncateTable(String table) {
 		try (Handle handle = dataMartJdbi.open()) {
 			handle.execute("TRUNCATE TABLE " + table);
 		} catch (Exception e) {
@@ -129,9 +143,9 @@ public class DataMartService {
 	}
 
 	/*
-	 * 11. tạo bảng Sao chép bảng: thuộc tính và dữ liệu từ datawarehouse
+	 * Tạo bảng sao chép bảng: thuộc tính và dữ liệu từ datawarehouse
 	 */
-	public boolean copyTable(String tableName) {
+	public static boolean copyTable(String tableName) {
 		// Lấy thông tin cột và kiểu dữ liệu từ DataWarehouse
 		try (Handle handle = dataWarehouseJdbi.open()) {
 			if (tableExists(tableName, handle)) {
@@ -156,9 +170,9 @@ public class DataMartService {
 		}
 	}
 
-	// 13 hàm copy dữ liệu từ bảng trong db datawarehouse sang bảng trong db
+	//hàm copy dữ liệu từ bảng trong db datawarehouse sang bảng trong db
 	// datamart
-	public boolean copyDataFromDatawarehouseToDatamart(String table) {
+	public static boolean copyDataFromDatawarehouseToDatamart(String table) {
 		boolean result = false;
 		try (Handle sourceHandle = dataWarehouseJdbi.open(); Handle destinationHandle = dataMartJdbi.open()) {
 
@@ -173,12 +187,11 @@ public class DataMartService {
 				System.out.println("Destination table " + table + " does not exist.");
 				return result;
 			}
-//				if()
 
 			String sourceTable = "datawarehouse." + table;
 			String destinationTable = "datamart." + table;
 
-			result = this.copyData(sourceTable, destinationTable, destinationHandle);
+			result = copyData(sourceTable, destinationTable, destinationHandle);
 			System.out.println("Data copied from " + sourceTable + " to " + destinationTable + " successfully.");
 			return result;
 
@@ -188,35 +201,11 @@ public class DataMartService {
 		}
 	}
 
-	// 14
-	// 14.1 chèn CLM và end
-	// 14.2 copy data từ bảng chính ta bảng tạm
-//		public boolean copyToDataTableInMart(String sourceTable, String destinationTable) {
-//			boolean result = false;
-//			try (Handle destinationHandle = dataMartJdbi.open()) {
-//				result = this.copyData(sourceTable, destinationTable, destinationHandle);
-//
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//
-//			return result;
-//
-//		}
-	// 14.3 truncate bảng tạm
-
-//		private void truncateTable(String table) {
-//			try (Handle handle = dataMartJdbi.open()) {
-//				handle.execute("TRUNCATE TABLE " + table);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
-
+	
 	public static void main(String[] args) {
 //		// Thực hiện sao chép bảng từ DataWarehouse sang DataMart
 		DataMartService dataMartService = new DataMartService();
-		DataWarehouseService dataWarehouseService = new DataWarehouseService();
+		DataWarehouseService dataWarehouseService =  DataWarehouseService.getInstance();
 		for (String table : dataWarehouseService.getAggregateTables()) {
 			String tableNameToCopy = table; // Thay thế bằng tên bảng thực tế
 			dataMartService.copyTable(tableNameToCopy);

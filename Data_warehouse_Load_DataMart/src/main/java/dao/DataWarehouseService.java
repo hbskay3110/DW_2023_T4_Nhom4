@@ -5,13 +5,24 @@ import org.jdbi.v3.core.Jdbi;
 import java.util.List;
 
 public class DataWarehouseService {
-    private final Jdbi dataWarehouseJdbi = DatabaseManager.getDatawarehouseJdbi();
+	public static DataWarehouseService instance;
+	public static DataWarehouseService getInstance() {
+		if(instance == null) {
+			instance = new DataWarehouseService();
+		}
+		return instance;
+	}
+	private DataWarehouseService() {
+		// TODO Auto-generated constructor stub
+	}
+	
+    private static Jdbi dataWarehouseJdbi = DatabaseManager.getDatawarehouseJdbi();
 
     /*
      * Lấy ra danh sách các bảng có tên chứa từ khóa 'aggregate'
      */
  // Trong DataWarehouseService
-    public List<String> getAggregateTables() {
+    public static List<String> getAggregateTables() {
         String keyword = "aggregates";
 
         return dataWarehouseJdbi.withHandle(handle -> {

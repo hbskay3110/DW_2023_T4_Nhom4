@@ -1,12 +1,14 @@
 package dao;
 
+import java.time.LocalDate;
+
 import org.jdbi.v3.core.Jdbi;
 
 public class ControlService {
-	private final Jdbi controlJdbi = DatabaseManager.getControlJdbi();
+	private static final Jdbi controlJdbi = DatabaseManager.getControlJdbi();
 
 	// 6. kiểm tra ngày hôm nay aggregate đã chạy chưa
-    public String getStatusAggregateToday(int id) {
+    public static String getStatusAggregateToday(int id) {
         return controlJdbi.withHandle(handle -> {
             return handle.createQuery("SELECT F.status FROM data_configs AS C "
                     + "JOIN data_files AS F ON F.id_config = :id "
@@ -20,7 +22,7 @@ public class ControlService {
         });
     }
  // 7. kiểm tra ngày hôm nay load data mart đã chạy chưa
-    public String getStatusLoadDataMartToday(int id) {
+    public static String getStatusLoadDataMartToday(int id) {
         return controlJdbi.withHandle(handle -> {
             return handle.createQuery("SELECT F.status FROM data_configs AS C "
                     + "JOIN data_files AS F ON F.id_config = :id "
@@ -35,17 +37,21 @@ public class ControlService {
     }
     
     // Phương thức thêm mới trạng thái vào bảng data_files
-    public int addStatus(int id, String note, String status) {
+    public static int addStatus(int id, String note, String status) {
+    	LocalDate date = LocalDate.now();
+    	String module = "LOAD_DATAMART";
         return controlJdbi.withHandle(handle -> {
-            return handle.createUpdate("INSERT INTO data_files (id_config, note, status) VALUES (:id, :note, :status)")
+            return handle.createUpdate("INSERT INTO data_files (id_config, note, status,dateRun,created_by_modul) VALUES (:id, :note, :status,:dateRun,:created_by_modul)")
                 .bind("id", id)
                 .bind("note", note)
                 .bind("status", status)
+                .bind("dateRun", date)
+                .bind("created_by_modul", module)
                 .execute();
         });
     }
  //3 - 4. Phương thức lấy thông tin cấu hình dữ liệu theo ID
-    public DataConfig getDataConfig(int id) {
+    public static DataConfig getDataConfig(int id) {
         String query = "SELECT * FROM data_configs AS C WHERE C.flag = 1 AND C.id = ? LIMIT 1";
         return controlJdbi.withHandle(handle -> {
             return handle.createQuery(query)
