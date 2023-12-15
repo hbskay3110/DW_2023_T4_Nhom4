@@ -5002,3 +5002,14 @@ Caused by: java.lang.Exception: File not found: E:\DevPrograms\GIT\DW_2023_T4_Nh
 2023-12-16 00:12:47,748 [Worker-25: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
 2023-12-16 00:12:47,776 [Worker-25: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
 2023-12-16 00:12:47,777 [Worker-25: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2023-12-16 00:13:21,389 [Worker-27: Updating Maven Project] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Update started
+2023-12-16 00:13:21,793 [Worker-27: Updating Maven Project] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: hehe.dw:Load_DataMart:0.0.1-SNAPSHOT @ E:\DevPrograms\GIT\DW_2023_T4_Nhom4\Data_warehouse_Load_DataMart\pom.xml.
+2023-12-16 00:13:22,273 [Worker-27: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /Data_warehouse_Load_DataMart/src/main/java
+2023-12-16 00:13:22,273 [Worker-27: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /Data_warehouse_Load_DataMart/src/main/resources
+2023-12-16 00:13:22,274 [Worker-27: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /Data_warehouse_Load_DataMart/src/test/java
+2023-12-16 00:13:22,275 [Worker-27: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /Data_warehouse_Load_DataMart/src/test/resources
+2023-12-16 00:13:22,433 [Worker-27: Updating Maven Project] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Update completed: 1 sec
+2023-12-16 00:13:22,856 [Worker-28: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2023-12-16 00:13:22,858 [Worker-28: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2023-12-16 00:13:22,871 [Worker-28: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2023-12-16 00:13:22,873 [Worker-28: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
