@@ -1,0 +1,19 @@
+package main;
+
+import crawl.CrawlDataSource1;
+import utils.Const;
+
+public class Main {
+	public static void main(String[] args) {
+<<<<<<< HEAD:.metadata/.plugins/org.eclipse.core.resources/.history/53/401f1cd3ea8a001e1264f914a6d29f95
+		String date = args[0];
+=======
+		int id_source = args.length > 0 ? Integer.parseInt(args[0]) : 1;
+		String date_lottery = args.length > 1 ? args[1] : "";
+		Const.setDate(date_lottery);
+		Const.setIdSource_1(id_source);
+>>>>>>> 882ed33c9cac6732b838e0559cbdcce129ae1640:Data_warehouse_Extract/src/main/java/main/Main.java
+		CrawlDataSource1 s1 = new CrawlDataSource1();
+		s1.execSource1();
+	}
+}

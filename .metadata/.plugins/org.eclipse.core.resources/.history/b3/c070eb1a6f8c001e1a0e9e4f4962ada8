@@ -1,0 +1,63 @@
+package model;
+
+import java.sql.Timestamp;
+
+public class DataConfig {
+    private int id;
+    private String fileName;
+    private String code;
+    private String description;
+    private String sourcePath;
+    private String location;
+    private String separation;
+    private String format;
+    private String databaseNameStaging;
+    private String databaseNameDatawarehouse;
+    private String databaseNameMart;
+    private String serverName;
+    private String port;
+    private String user;
+    private String pass;
+    private String columnsStagingTemp;
+    private String typeColumnsStagingTemp;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+    private String createdBy;
+    private String updatedBy;
+    private boolean flag;
+
+    // Constructors, getters, and setters can be generated based on your needs
+
+    public DataConfig() {
+    }
+
+    public DataConfig(String fileName, String code, String description, String sourcePath, String location,
+                      String separation, String format, String databaseNameStaging, String databaseNameDatawarehouse,
+                      String databaseNameMart, String serverName, String port, String user, String pass,
+                      String columnsStagingTemp, String typeColumnsStagingTemp, Timestamp createdAt, Timestamp updatedAt,
+                      String createdBy, String updatedBy, boolean flag) {
+        this.fileName = fileName;
+        this.code = code;
+        this.description = description;
+        this.sourcePath = sourcePath;
+        this.location = location;
+        this.separation = separation;
+        this.format = format;
+        this.databaseNameStaging = databaseNameStaging;
+        this.databaseNameDatawarehouse = databaseNameDatawarehouse;
+        this.databaseNameMart = databaseNameMart;
+        this.serverName = serverName;
+        this.port = port;
+        this.user = user;
+        this.pass = pass;
+        this.columnsStagingTemp = columnsStagingTemp;
+        this.typeColumnsStagingTemp = typeColumnsStagingTemp;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+        this.flag = flag;
+    }
+
+    // Getters and setters for each field
+}

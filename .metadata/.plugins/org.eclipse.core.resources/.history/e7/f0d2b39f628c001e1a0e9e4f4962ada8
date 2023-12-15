@@ -1,0 +1,35 @@
+package db;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+public class MySqlConnectionPool {
+
+	private static final HikariDataSource dataSource;
+
+    static {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:mysql://localhost:3306/your_database_name");
+        config.setUsername("your_username");
+        config.setPassword("your_password");
+        config.setMaximumPoolSize(10); // Số lượng connection tối đa trong pool
+
+        dataSource = new HikariDataSource(config);
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
+
+    // Đóng connection pool khi ứng dụng kết thúc
+    public static void closeDataSource() {
+        if (dataSource != null && !dataSource.isClosed()) {
+            dataSource.close();
+        }
+    }
+	
+	
+}

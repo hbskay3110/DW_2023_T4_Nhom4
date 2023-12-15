@@ -1,0 +1,9 @@
+package db;
+
+public class DaoControl {
+	
+	public static boolean addStatus(String status) {
+		
+	}
+
+}

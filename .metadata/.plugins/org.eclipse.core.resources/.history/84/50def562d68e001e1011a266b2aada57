@@ -1,0 +1,67 @@
+package utils;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+
+import db.DaoControl;
+import model.DataConfig;
+
+public class Const {
+	// file
+	public static final String PATH;
+	public static final String NAME_FILE;
+	public static final String CSV_EXTENSION;
+//	public static final String NAME_SHEET;
+
+	// 
+	public static final String SOURCE_1;
+	public static String date = "";
+	public static final int QUANTITY_ATTRIBUTE = 6;
+
+
+	
+	public static final int ID_SOURCE_1;
+	 
+
+	static {
+		// load config from file
+		Properties properties = loadProperties();
+		DataConfig  config ;
+		
+		ID_SOURCE_1 = Integer.parseInt(properties.getProperty("id_source_1"));
+		
+		
+//		NAME_SHEET = properties.getProperty("NAME_SHEET");
+
+	
+		config = new DaoControl().getDataConfig( ID_SOURCE_1);
+		PATH = config.getLocation();
+		NAME_FILE = config.getFileName();
+		CSV_EXTENSION = config.getFormat();
+		SOURCE_1 = config.getSourcePath();
+		
+	}
+
+	private static Properties loadProperties() {
+		Properties properties = new Properties();
+
+		try (InputStream input = Const.class.getClassLoader().getResourceAsStream("config.properties");
+			     InputStreamReader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+			    properties.load(reader);
+			} catch (IOException e) {
+			    e.printStackTrace();
+			    System.err.println("Lỗi khi đọc file properties.");
+			}
+
+
+		return properties;
+	}
+
+	public static void setDate(String date) {
+		Const.date = date;
+	}
+}

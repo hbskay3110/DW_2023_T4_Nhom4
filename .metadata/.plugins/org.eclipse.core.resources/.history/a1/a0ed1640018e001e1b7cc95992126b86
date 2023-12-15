@@ -1,0 +1,14 @@
+package main;
+
+import crawl.CrawlDataSource1;
+import utils.Const;
+
+public class Main {
+
+	public static void main(String[] args) {
+		String date_lottery =  args.length > 0 ? args[0]:"";
+		Const.setDate(date_lottery);
+		CrawlDataSource1 s1 = new CrawlDataSource1();
+		s1.execSource1();
+	}
+}
