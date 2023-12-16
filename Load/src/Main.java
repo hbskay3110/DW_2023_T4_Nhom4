@@ -93,7 +93,7 @@ public class Main {
 								user, pass)) {
 							//  Thành công = yes
 							// 8. insert into table data_file với status = BL
-								inserDataFile(id_config, dateRun, status, "Bắt đầu load", "Load", connection);								
+								inserDataFile(id_config, dateRun, "BL", "Bắt đầu load", "Load", connection);								
 								// 9. Sử dụng câu lênh load data into để load tất tất cả dữ liệu vào bảng tạm
 								String callProcedureLoad = "LOAD DATA INFILE ? INTO TABLE " + tableNameStagingTemp + " CHARACTER SET utf8 FIELDS TERMINATED BY ? LINES TERMINATED BY '\n' IGNORE 1 ROWS";
 
