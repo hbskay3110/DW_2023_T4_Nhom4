@@ -14,6 +14,6 @@
     <stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.m2e.launchconfig.classpathProvider"/>
     <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="main.Main"/>
     <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="Data_warehouse_Extract"/>
-    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="1 28-11-2023"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="1"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Data_warehouse_Extract"/>
 </launchConfiguration>

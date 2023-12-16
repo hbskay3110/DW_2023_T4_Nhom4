@@ -1,21 +1,12 @@
 package crawl;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import org.jsoup.Connection;
 import org.jsoup.Connection.Response;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -30,15 +21,15 @@ public class CrawlProvinceSource1 {
 	 * paramDate: lưu ngày nếu người dùng truyền param khi chạy thủ công
 	 * 
 	 * */
-	static String paramDate = Const.date.length() == 0 ? "" : "?date=" + Const.date;
-	private static final String[] AREA_LOTTERY = { Const.SOURCE_1 + ERegion.MIEN_TRUNG.getCode() + paramDate,
+	 String paramDate = Const.date.length() == 0 ? "" : "?date=" + Const.date;
+	private final String[] AREA_LOTTERY = { Const.SOURCE_1 + ERegion.MIEN_TRUNG.getCode() + paramDate,
 			Const.SOURCE_1 + ERegion.MIEN_NAM.getCode() + paramDate, Const.SOURCE_1 + ERegion.MIEN_BAC.getCode() + paramDate };
 
 	/*
 	 * hàm getProvinces()
 	 * Chức năng: lấy các đài được công bố kết quả hiện tại
 	 * */
-	public static List<String> getProvinces() {
+	public  List<String> getProvinces() {
 		ArrayList<String> result = new ArrayList<>();
 		result.add(Const.NAME_NORTH);
 		Response response = null;
