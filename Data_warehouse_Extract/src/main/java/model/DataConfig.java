@@ -116,7 +116,7 @@ public class DataConfig {
 	}
 
 	public String getFormat() {
-		return format;
+		return "."+format;
 	}
 
 	public void setFormat(String format) {
