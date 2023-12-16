@@ -86,8 +86,8 @@ public class DaoControl {
 		int month = Integer.parseInt(tokenizer.nextToken());
 		int year = Integer.parseInt(tokenizer.nextToken());
 		LocalDate date = Const.date.isEmpty() ? LocalDate.now() : LocalDate.of(year, month, day);
-		String query = "INSERT INTO data_files (id_config, note, status,dateRun) VALUES (?, ?, ?, ?)";
-		return executeUpdate(query, id, note, status, date);
+		String query = "INSERT INTO data_files (id_config, note, status,dateRun,created_by_modul) VALUES (?, ?, ?, ?, ?)";
+		return executeUpdate(query, id, note, status, date ,Const.NAME_PROCESS);
 	}
 
 	/*
@@ -122,7 +122,7 @@ public class DaoControl {
 				dataConfig.setCode(rs.getString("code"));
 				dataConfig.setSourcePath(rs.getString("source_path"));
 				dataConfig.setLocation(rs.getString("location"));
-				dataConfig.setFileName(rs.getString("file_name"));
+				dataConfig.setFileName(rs.getString("fileName"));
 				dataConfig.setFormat(rs.getString("format"));
 				dataConfig.setSeparation(rs.getString("separation"));
 			}

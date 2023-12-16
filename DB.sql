@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS data_configs (
 );
 
 INSERT INTO data_configs (code,description,source_path,location,fileName,seperator,format,databaseNameStaging,databaseNameDatawarehouse,databaseNameMart,serverName,port,user, pass,tableNameStagingTemp,columnsStagingTemp,TypeColumnsStagingTemp,
-    updated_at,create_by,update_by,flag) VALUES ('XS_TT','Config chứa dữ liệu của trang kqxs','kqxs.vn','D://data//','data',',','csv','Staging',
-    'Datawarehouse','Mart','127.0.0.1',3306,'root','123456789','Lotteries_temp','(location,weekdays,date,prizes,num_result,region)','(VARCHAR(255), VARCHAR(255), VARCHAR(255), VARCHAR(255), VARCHAR(255),VARCHAR(255))',now(),'Kiên','Kiên',1);
+    updated_at,create_by,update_by,flag) VALUES ('XS_TT','Config chứa dữ liệu của trang kqxs','https://www.kqxs.vn','D://data//','data',',','csv','Staging',
+    'Datawarehouse','datamart','127.0.0.1',3306,'root','123456789','Lotteries_temp','(location,weekdays,date,prizes,num_result,region)','(VARCHAR(255), VARCHAR(255), VARCHAR(255), VARCHAR(255), VARCHAR(255),VARCHAR(255))',now(),'Kiên','Kiên',1);
 select * from data_configs;
 CREATE TABLE IF NOT EXISTS data_files (
     id INT PRIMARY KEY auto_increment,

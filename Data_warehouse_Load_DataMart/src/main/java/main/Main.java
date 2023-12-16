@@ -53,7 +53,8 @@ private static Jdbi dataWarehouseJdbi ;
 
 		boolean checkAggregateExecuteToday = EStatus.CLA.name()
 				.equals(controlService.getStatusAggregateToday(Const.idSource_1));
-		if (checkAggregateExecuteToday) {
+		if (!checkAggregateExecuteToday) {
+			System.out.println("Process Load_Aggregate chưa hoàn thành!");
 			return;
 		}
 		/*

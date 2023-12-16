@@ -10,6 +10,7 @@ public class Const {
 	public static String CSV_EXTENSION;
 	//
 	public static String SOURCE_1;
+	public static final String NAME_PROCESS = "EXTRACT";
 	public static final String NAME_SHEET = "data";
 	public static final int QUANTITY_ATTRIBUTE = 6;
 
