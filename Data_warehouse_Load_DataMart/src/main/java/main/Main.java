@@ -26,24 +26,23 @@ private static Jdbi dataWarehouseJdbi ;
 		
 	}
 
-	// 1 - 5
 	public void executeLoadDataMart() {
-		// 1 load config
+		// 1.Load các cấu hình database từ file database.properties
 		Properties properties = DatabaseManager.loadProperties(EDatabase.CONTROL.toString().toLowerCase());
-//2 kết nối control
+		// 2.Kết nối database control
 		Jdbi connectConfigDB = DatabaseManager.createJdbi(properties);
-		// 3
+		// 3.Kết nối thành công hay không?
 		if (connectConfigDB == null) {
 			return;
 		}
-		// 4 lấy 1 dòng
+		// 4.Lấy 1 dòng trong bảng data_configs theo id = id và có flat = 1 với limit = 1
 		DataConfig dataConfig = ControlService.getDataConfig(Const.idSource_1);
-		// 5 set  
+		// 5.Set các cấu hình cần thiết từ dữ liệu data_configs như tên database , port, user,..
 		DatabaseManager.connectDatamartJdbi(dataConfig.getServerName(), dataConfig.getPort(),
 				dataConfig.getDatabaseNameMart(), dataConfig.getUser(), dataConfig.getPass());
 		DatabaseManager.connectDatawarehouse(dataConfig.getServerName(), dataConfig.getPort(),
 				dataConfig.getDatabaseNameDatawarehouse(), dataConfig.getUser(), dataConfig.getPass());
-		// 6 ket
+		// 6.Kết nối database dataware house , datamart
 		dataMartJdbi = DatabaseManager.getDatamartJdbi();
 		dataWarehouseJdbi = DatabaseManager.getDatawarehouseJdbi();
 		String tableTemp = "";
