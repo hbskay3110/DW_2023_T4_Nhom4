@@ -16,7 +16,9 @@ import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.sql.CallableStatement;
@@ -57,7 +59,7 @@ public class Main {
 		try (Connection connection = conectDB.getConnection(serverName, port, dbName, userName, pass)) {
 			System.out.println(conectDB.getConnection(serverName, port, dbName, userName, pass));
 			// Nếu thành công = yes
-			// 3. Load các dòng config có flag=1 và id= id và dòng data_files mới nhất có ngày tương ứng    			
+			// 3. Load các dòng config có flag=1 và id= id và dòng data_files mới nhất có ngày tương ứng bằng procedure  loadConfig(id,dateRun)    			
 			String callProcedureInsertData = "{CALL loadConfig(?,?)}";
 			CallableStatement callableStatement2 = connection.prepareCall(callProcedureInsertData);			
 			callableStatement2.setInt(1, id);
@@ -89,12 +91,12 @@ public class Main {
 							// 6. insert into table data_file với status = BLA
 								inserDataFile(id_config, dateRun, "BLA", "Bắt đầu load Aggregate", "LoadAggregate", connection);								
 								
-								// 7. Sử dụng câu lênh load data into để load tất tất cả dữ liệu vào bảng tạm
+								// 7.Truncate dữ liệu trong bảng result_lottery_aggregates bằng procedure TruncateDataAggregate
 								String callProcedureLoad = "call TruncateDataAggregate()";
 								try (CallableStatement statementLoad = connectionDatawarehouse.prepareCall(callProcedureLoad)) {								    
 								    int rs = statementLoad.executeUpdate();
 								// Thành công ? Yes
-								// 8.Sử câu lệnh gọi proceduce loadAggregate để chuyển dữ liệu từ datawarehouse vào aggregate 
+								// 8. Sử câu lệnh gọi proceduce InsertResultByDaySouthAggregates để chuyển dữ liệu từ datawarehouse vào aggregate 
 								String callProcedure = "{CALL InsertResultByDaySouthAggregates()}";
 								try (CallableStatement callableStatement = connectionDatawarehouse.prepareCall(callProcedure)) {
 									int rsUpdateNull = callableStatement.executeUpdate();
@@ -136,8 +138,11 @@ public class Main {
 		}
 		//Connect database control trường hợp thành công là no
 		catch (Exception e) {
-			// 12. Ghi log vào file D://log
-			createFileWithIncrementedName(location_log, "Log_error.txt", "Modul : Load /n Error : " + e.getMessage());
+			// 12. Ghi log vào file D://log//Log_error_yyyy-mm-dd hh-mm-ss.txt
+			 Date currentDateTime = new Date();
+		        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+		        String formattedDateTime = dateFormat.format(currentDateTime);
+		        createFileWithIncrementedName(location_log, "Log_error_"+formattedDateTime+".txt", "Modul : Load /n Error : " + e.getMessage());
 		}
 	}
 
@@ -153,25 +158,8 @@ public class Main {
 		int rs = callableStatement.executeUpdate();
 	}
 
-	private static String incrementFileName(String fileName, int number) {
-		// Thêm số vào tên file trước phần mở rộng
-		int dotIndex = fileName.lastIndexOf(".");
-		String baseName = fileName.substring(0, dotIndex);
-		String extension = fileName.substring(dotIndex);
-		return baseName + "_" + number + extension;
-	}
-
 	private static void createFileWithIncrementedName(String filePath, String fileName, String data) {
 		Path path = Paths.get(filePath, fileName);
-
-		// Kiểm tra xem tệp có tồn tại hay không
-		int fileNumber = 1;
-		while (Files.exists(path)) {
-			// Tăng số và thêm vào tên file
-			fileName = incrementFileName(fileName, fileNumber);
-			path = Paths.get(filePath, fileName);
-			fileNumber++;
-		}
 
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile()))) {
 			// Ghi dữ liệu vào file
@@ -187,7 +175,7 @@ public class Main {
 		
 		int id_source = args.length > 0 ? Integer.parseInt(args[0]) : 1;
 		String dateRun = args.length > 1 ? args[1] : String.valueOf(LocalDate.now());
-		new Main().load(id_source,dateRun);
-	
+//		new Main().load(id_source,dateRun);
+		new Main().load(1,"2023-12-15");
 	}
 }
