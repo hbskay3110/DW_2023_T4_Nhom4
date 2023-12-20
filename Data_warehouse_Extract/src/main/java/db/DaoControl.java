@@ -124,7 +124,7 @@ public class DaoControl {
 				dataConfig.setLocation(rs.getString("location"));
 				dataConfig.setFileName(rs.getString("fileName"));
 				dataConfig.setFormat(rs.getString("format"));
-				dataConfig.setSeparation(rs.getString("separation"));
+				dataConfig.setSeparation(rs.getString("seperator"));
 			}
 			return dataConfig;
 		}, id);
