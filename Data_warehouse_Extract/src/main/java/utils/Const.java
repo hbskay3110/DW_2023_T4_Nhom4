@@ -13,6 +13,7 @@ public class Const {
 	public static final String NAME_PROCESS = "EXTRACT";
 	public static final String NAME_SHEET = "data";
 	public static final int QUANTITY_ATTRIBUTE = 6;
+	public static final String LOCAL_LOG = "D://log//";
 
 	public static String date;
 	public static int idSource_1;

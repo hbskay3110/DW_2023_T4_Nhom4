@@ -6,12 +6,15 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import utils.Const;
+import utils.IO;
 
 public class DataSource {
 
@@ -41,7 +44,8 @@ public class DataSource {
 	 * 2. Kết nối database control
 	 */
 	public static Connection getConnection() throws SQLException {
-		return dataSource.getConnection();
+
+			return dataSource.getConnection() != null ? dataSource.getConnection() : null;
 	}
 
 	private static Properties loadDatabaseProperties() {

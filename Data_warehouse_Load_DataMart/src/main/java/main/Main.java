@@ -30,9 +30,10 @@ private static Jdbi dataWarehouseJdbi ;
 		// 1.Load các cấu hình database từ file database.properties
 		Properties properties = DatabaseManager.loadProperties(EDatabase.CONTROL.toString().toLowerCase());
 		// 2.Kết nối database control
-		Jdbi connectConfigDB = DatabaseManager.createJdbi(properties);
+		Jdbi connectConfigDB = DatabaseManager.getControlJdbi();
+		boolean isConnected = DatabaseManager.isControlDatabaseConnected();
 		// 3.Kết nối thành công hay không?
-		if (connectConfigDB == null) {
+		if (!isConnected) {
 			return;
 		}
 		// 4.Lấy 1 dòng trong bảng data_configs theo id = id và có flat = 1 với limit = 1

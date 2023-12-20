@@ -2,13 +2,19 @@ package dao;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
+import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
+
+import utils.Const;
+import utils.IO;
 
 public class DatabaseManager {
 
-	// 2 Kết nối 3 CSDL
+	// 2 Kết nối CSDL control
 	private static final Jdbi controlJdbi = createJdbi(EDatabase.CONTROL.toString().toLowerCase());
 	private static Jdbi datawarehouseJdbi;
 	private static Jdbi datamartJdbi;
@@ -72,4 +78,18 @@ public class DatabaseManager {
 		return datamartJdbi;
 	}
 
+	 public static boolean isControlDatabaseConnected() {
+	        try (Handle handle = controlJdbi.open()) {
+	            // Thực hiện một truy vấn đơn giản để kiểm tra kết nối
+	            return true;
+	        } catch (Exception e) {
+	        	Date currentDateTime = new Date();
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+				String formattedDateTime = dateFormat.format(currentDateTime);
+				IO.createFileWithIncrementedName(Const.LOCAL_LOG, "Log_error_" + formattedDateTime + ".txt",
+						"Modul : Load_Datamart | Error : không kết nối được database control | Reason: "+ e.getMessage() );
+	            return false;
+	        }
+	    }
+	
 }

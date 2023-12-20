@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -13,15 +14,17 @@ import com.mysql.cj.protocol.a.LocalDateValueEncoder;
 
 import model.DataConfig;
 import utils.Const;
+import utils.IO;
 
 public class DaoControl {
 
 	// Hàm thực hiện các truy vấn cập nhật (INSERT, UPDATE, DELETE)
 	private int executeUpdate(String query, Object... params) {
 		int result = 0;
-
+		Connection connection = null;
 		// Mở và đóng kết nối tự động bằng try-with-resources
-		try (Connection connection = DataSource.getConnection()) {
+		try {
+			connection = DataSource.getConnection();
 			if (connection != null) {
 				// Thực thi truy vấn cập nhật
 				try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -31,8 +34,20 @@ public class DaoControl {
 					System.out.println("Query execution error: " + e.getMessage());
 				}
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Connection error: " + e.getMessage());
+			
+		}finally {
+			if (connection == null) {
+				/*
+				 * 3.1 .Ghi log vào file D://log//Log_error_yyyy-mm-dd hh-mm-ss.txt
+				 */
+				Date currentDateTime = new Date();
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+				String formattedDateTime = dateFormat.format(currentDateTime);
+				IO.createFileWithIncrementedName(Const.LOCAL_LOG, "Log_error_" + formattedDateTime + ".txt",
+						"Modul : Extract /n Error : không kết nối được database control");
+			}
 		}
 
 		return result;
@@ -41,12 +56,13 @@ public class DaoControl {
 	// Hàm thực hiện các truy vấn truy vấn SELECT và ánh xạ kết quả với mapper
 	private <T> T executeQuery(String query, ResultSetMapper<T> mapper, Object... params) {
 		T result = null;
-
+		Connection connection = null;
 		/*
 		 * 3.Kiểm tra kết nối cơ sở dữ liệu thành công hay không
 		 */
 		// Mở và đóng kết nối tự động bằng try-with-resources
-		try (Connection connection = DataSource.getConnection()) {
+		try {
+			connection = DataSource.getConnection();
 			if (connection != null) {
 				// Thực thi truy vấn SELECT và ánh xạ kết quả
 				try (PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -55,10 +71,25 @@ public class DaoControl {
 					result = mapper.map(resultSet);
 				} catch (SQLException e) {
 					System.out.println("Query execution error: " + e.getMessage());
+
 				}
 			}
-		} catch (SQLException e) {
+
+		} catch (Exception e) {
 			System.out.println("Connection error: " + e.getMessage());
+
+		} finally {
+			/*
+			 * 3.1 .Ghi log vào file D://log//Log_error_yyyy-mm-dd hh-mm-ss.txt
+			 */
+			if (connection == null) {
+				
+				Date currentDateTime = new Date();
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+				String formattedDateTime = dateFormat.format(currentDateTime);
+				IO.createFileWithIncrementedName(Const.LOCAL_LOG, "Log_error_" + formattedDateTime + ".txt",
+						"Modul : Extract /n Error : không kết nối được database control");
+			}
 		}
 
 		return result;
@@ -87,7 +118,7 @@ public class DaoControl {
 		int year = Integer.parseInt(tokenizer.nextToken());
 		LocalDate date = Const.date.isEmpty() ? LocalDate.now() : LocalDate.of(year, month, day);
 		String query = "INSERT INTO data_files (id_config, note, status,dateRun,created_by_modul) VALUES (?, ?, ?, ?, ?)";
-		return executeUpdate(query, id, note, status, date ,Const.NAME_PROCESS);
+		return executeUpdate(query, id, note, status, date, Const.NAME_PROCESS);
 	}
 
 	/*

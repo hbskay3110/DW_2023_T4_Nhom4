@@ -3,6 +3,7 @@ package utils;
 public class Const {
 	public static int idSource_1;
 	public static String date;
+	public static final String LOCAL_LOG = "D://log//";
 public static String DB_Datawarehouse;
 
 	public static int getIdSource_1() {
