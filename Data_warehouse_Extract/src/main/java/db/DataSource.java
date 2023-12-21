@@ -45,7 +45,7 @@ public class DataSource {
 	 */
 	public static Connection getConnection() throws SQLException {
 
-			return dataSource.getConnection() != null ? dataSource.getConnection() : null;
+			return dataSource.getConnection();
 	}
 
 	private static Properties loadDatabaseProperties() {

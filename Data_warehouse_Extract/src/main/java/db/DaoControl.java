@@ -37,7 +37,8 @@ public class DaoControl {
 		} catch (Exception e) {
 			System.out.println("Connection error: " + e.getMessage());
 			
-		}finally {
+		}
+		finally {
 			if (connection == null) {
 				/*
 				 * 3.1 .Ghi log vào file D://log//Log_error_yyyy-mm-dd hh-mm-ss.txt
@@ -47,6 +48,12 @@ public class DaoControl {
 				String formattedDateTime = dateFormat.format(currentDateTime);
 				IO.createFileWithIncrementedName(Const.LOCAL_LOG, "Log_error_" + formattedDateTime + ".txt",
 						"Modul : Extract /n Error : không kết nối được database control");
+			}
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 
@@ -78,7 +85,8 @@ public class DaoControl {
 		} catch (Exception e) {
 			System.out.println("Connection error: " + e.getMessage());
 
-		} finally {
+		} 
+		finally {
 			/*
 			 * 3.1 .Ghi log vào file D://log//Log_error_yyyy-mm-dd hh-mm-ss.txt
 			 */
@@ -89,6 +97,12 @@ public class DaoControl {
 				String formattedDateTime = dateFormat.format(currentDateTime);
 				IO.createFileWithIncrementedName(Const.LOCAL_LOG, "Log_error_" + formattedDateTime + ".txt",
 						"Modul : Extract /n Error : không kết nối được database control");
+			}
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 
